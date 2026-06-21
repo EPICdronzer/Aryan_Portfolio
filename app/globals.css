@@ -1,26 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #070709;
+  --foreground: #ffffff;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
+
+/* Custom Cursive Font Utility */
+.font-cursive {
+  font-family: 'Caveat', cursive, sans-serif;
+}
+
+/* Custom Block Font Utility */
+.font-block {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* Custom Premium Animations */
+@keyframes float-all-1 {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  25% {
+    transform: translate(25px, -20px) rotate(15deg);
+  }
+  50% {
+    transform: translate(-10px, -35px) rotate(5deg);
+  }
+  75% {
+    transform: translate(-30px, 15px) rotate(-12deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+@keyframes float-all-2 {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-20px, 25px) rotate(-18deg);
+  }
+  50% {
+    transform: translate(25px, -15px) rotate(12deg);
+  }
+  75% {
+    transform: translate(15px, 30px) rotate(-8deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+@keyframes blob-wobble {
+  0%, 100% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    transform: rotate(0deg) scale(0.95);
+  }
+  33% {
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+    transform: rotate(4deg) scale(1.02);
+  }
+  66% {
+    border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%;
+    transform: rotate(-3deg) scale(0.98);
+  }
+}
+
+.animate-float-all-1 {
+  animation: float-all-1 12s ease-in-out infinite;
+}
+
+.animate-float-all-2 {
+  animation: float-all-2 15s ease-in-out infinite;
+}
+
+.animate-blob-wobble {
+  animation: blob-wobble 8s ease-in-out infinite;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Ambient Blue-Whitish Background Lighting Animations */
+@keyframes ambient-glow-1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(100px, 80px) scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes ambient-glow-2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1.1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-80px, -60px) scale(0.9);
+    opacity: 1;
+  }
+}
+
+@keyframes ambient-glow-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(0.95);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(60px, -90px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+.animate-ambient-glow-1 {
+  animation: ambient-glow-1 25s ease-in-out infinite;
+}
+
+.animate-ambient-glow-2 {
+  animation: ambient-glow-2 30s ease-in-out infinite;
+}
+
+.animate-ambient-glow-3 {
+  animation: ambient-glow-3 20s ease-in-out infinite;
+}
+
+/* Lightning/Thunder Background Flashing Effects */
+@keyframes lightning-1 {
+  0%, 75%, 77%, 100% {
+    opacity: 0;
+    filter: blur(120px) brightness(1);
+  }
+  76% {
+    opacity: 1;
+    filter: blur(100px) brightness(1.8);
+    transform: scale(1.15) translateY(-10px);
+  }
+  76.4% {
+    opacity: 0.25;
+    filter: blur(120px) brightness(1);
+  }
+  76.8% {
+    opacity: 0.85;
+    filter: blur(100px) brightness(1.5);
+    transform: scale(1.08) translateY(-5px);
+  }
+}
+
+@keyframes lightning-2 {
+  0%, 42%, 44%, 100% {
+    opacity: 0;
+    filter: blur(140px) brightness(1);
+  }
+  43% {
+    opacity: 0.95;
+    filter: blur(110px) brightness(1.6);
+    transform: scale(1.12) translateY(-8px);
+  }
+  43.3% {
+    opacity: 0.15;
+    filter: blur(140px) brightness(1);
+  }
+  43.6% {
+    opacity: 0.75;
+    filter: blur(110px) brightness(1.4);
+    transform: scale(1.05) translateY(-4px);
+  }
+}
+
+.animate-lightning-1 {
+  animation: lightning-1 12s infinite;
+}
+
+.animate-lightning-2 {
+  animation: lightning-2 16s infinite;
+}
+
+
+
+
+
