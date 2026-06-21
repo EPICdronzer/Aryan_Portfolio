@@ -4,6 +4,50 @@ import { useState } from 'react';
 
 export default function AboutPage() {
   const [activeCategory, setActiveCategory] = useState('post-production');
+  const [activeIndexPhilosophy, setActiveIndexPhilosophy] = useState(1);
+  const [activeIndexToolkit, setActiveIndexToolkit] = useState(1);
+
+  const handleScrollPhilosophy = (e) => {
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndexPhilosophy(activeIdx);
+  };
+
+  const handleScrollToolkit = (e) => {
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndexToolkit(activeIdx);
+  };
 
   const philosophy = [
     {
@@ -38,18 +82,18 @@ export default function AboutPage() {
         specs: ['Color Grading', 'Fairlight Audio', 'Node Compositing', 'Multi-Cam Editing']
       },
       { 
-        name: 'Adobe After Effects', 
-        desc: 'Advanced motion graphics, custom transition loops, and dynamic visual FX.', 
-        bg: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80',
-        role: 'Motion Graphics Engine',
-        specs: ['Keyframe FX', 'Rotoscoping', '3D Camera Tracking', 'Expression Scripting']
+        name: 'Higgsfield', 
+        desc: 'Advanced AI generative text-to-video layers and realistic camera animation.', 
+        bg: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80',
+        role: 'AI Generation Hub',
+        specs: ['Text-to-Video', 'Camera Movement Control', 'Character Consistency', 'Dynamic B-Roll']
       },
       { 
-        name: 'Premiere Pro', 
-        desc: 'Rapid assembly, timeline drafting, and audio-video synchronization.', 
-        bg: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80',
-        role: 'Drafting & Assembly',
-        specs: ['Proxies Workflow', 'Speech to Text', 'Essential Sound', 'Dynamic Link Sync']
+        name: 'Claude', 
+        desc: 'AI-assisted scripting, structural hook drafting, and content ideation.', 
+        bg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+        role: 'Scripting & Ideation',
+        specs: ['Hook Engineering', 'Outline Generation', 'Competitor Analysis', 'Script Polishing']
       },
       { 
         name: 'Audition & Photoshop', 
@@ -128,12 +172,19 @@ export default function AboutPage() {
     { year: '2026', title: 'Elite Strategy & Consultation', desc: 'Partnering directly with leading Indian creators and tech founders to architect end-to-end viral video channels.' }
   ];
 
+  const timelineImages = [
+    'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+  ];
+
   return (
-    <div className="relative pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white">
+    <div className="relative pt-24 pb-16 px-6 md:px-20 lg:px-32 text-white">
       {/* Background radial glow */}
       <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[80%] h-[500px] bg-gradient-to-t from-cyan-950/10 to-transparent rounded-full blur-[150px] pointer-events-none z-0" />
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-24">
+      <div className="max-w-7xl mx-auto relative z-10 space-y-16">
         
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -143,7 +194,7 @@ export default function AboutPage() {
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
             THE MAN BEHIND THE<br />
             <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}>
-              CAMERA & WORKSTATION
+              CAMERA &amp; WORKSTATION
             </span>
           </h2>
           <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed max-w-2xl mx-auto pt-2">
@@ -151,43 +202,90 @@ export default function AboutPage() {
           </p>
         </div>
 
+        {/* About Banner: Portrait + Workstation strip */}
+        <div className="relative rounded-3xl overflow-hidden border border-zinc-800/60 shadow-[0_24px_80px_rgba(0,0,0,0.6)] bg-zinc-950/40 h-48 md:h-64 select-none pointer-events-none">
+          {/* Background workstation image */}
+          <img
+            src="/intro_workstation.png"
+            alt="Editing workstation"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-35 filter grayscale contrast-110"
+          />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-transparent to-transparent pointer-events-none" />
+          {/* Content over banner */}
+          <div className="absolute inset-0 flex items-end p-8 gap-6">
+            {/* Portrait */}
+            <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-2 border-[#22d3ee]/40 shadow-[0_0_20px_rgba(34,211,238,0.15)] shrink-0">
+              <img
+                src="/img2.png"
+                alt="Aryan Chopra"
+                className="w-full h-full object-cover filter grayscale contrast-110"
+              />
+            </div>
+            {/* Name + role text */}
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Available for Projects</span>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide">Aryan Chopra</h3>
+              <p className="text-[#22d3ee] text-xs font-bold uppercase tracking-widest">AI Video Editor · Post-Production Specialist</p>
+            </div>
+          </div>
+        </div>
+
         {/* Story Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h3 className="text-2xl md:text-3xl font-black uppercase text-[#22d3ee] tracking-wide">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+          <div className="lg:col-span-5 flex flex-col justify-center space-y-6 border-l-2 border-[#22d3ee]/40 pl-6 md:pl-8 py-2">
+            <h3 className="text-2xl md:text-3xl font-black uppercase text-[#22d3ee] tracking-wide font-sans">
               MY PHILOSOPHY
             </h3>
-            <p className="text-zinc-300 font-light leading-relaxed text-sm md:text-base">
+            <p className="text-zinc-200 font-light leading-relaxed text-sm md:text-base">
               I believe video editing is not just about cuts and transitions—it is a branch of behavioral psychology. In a digital world dominated by short attention spans, the first three seconds are sacred ground. We design our clips using structural hook frameworks that keep viewers locked from the start.
             </p>
-            <p className="text-zinc-400 font-light leading-relaxed text-sm md:text-base">
+            <p className="text-zinc-400 font-light leading-relaxed text-xs md:text-sm">
               By combining state-of-the-art post-production suites (DaVinci Resolve, AE) with generative AI platforms, I act as a force multiplier. This workflow allows for rapid asset creation, automated layout composition, and high-fidelity soundscapes that would take typical production houses weeks to execute.
             </p>
           </div>
           
           {/* Core Philosophy Cards (Mobile Swipeable, Desktop Grid) */}
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 md:gap-6 md:pb-0 w-auto">
+          <div 
+            onScroll={handleScrollPhilosophy}
+            className="lg:col-span-7 flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 md:gap-6 md:pb-0 w-auto"
+          >
             {philosophy.map((item, idx) => (
               <div 
                 key={idx}
-                className="snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/20 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden group min-h-[160px]"
+                className={`snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-6 rounded-2xl bg-[#0c0c0e]/90 border shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group min-h-[160px] flex flex-col justify-between cursor-default transition-all duration-500 ease-out
+                  ${idx === activeIndexPhilosophy
+                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_25px_rgba(34,211,238,0.15)] z-20'
+                    : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 pointer-events-none z-10'
+                  }
+                  md:scale-100 md:opacity-100 md:border-zinc-800/80 hover:border-[#22d3ee]/35 hover:shadow-[0_0_25px_rgba(34,211,238,0.1)]
+                `}
               >
                 {/* Dim background image */}
                 <img 
                   src={item.bg} 
                   alt={item.title}
-                  className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-65 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
+                  className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-45 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
                 />
                 {/* Dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/60 to-[#0c0c0e]/15 z-0 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/70 to-[#0c0c0e]/20 z-0 pointer-events-none" />
 
-                <div className="relative z-10 space-y-2">
-                  <h4 className="text-base font-bold text-zinc-100 uppercase tracking-wide group-hover:text-[#22d3ee] transition-colors duration-300">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-zinc-400 font-light mt-2 leading-relaxed">
-                    {item.desc}
-                  </p>
+                <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-mono text-[#22d3ee]/80 font-bold tracking-widest">0{idx + 1} /</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-base font-black text-zinc-100 uppercase tracking-wide group-hover:text-[#22d3ee] transition-colors duration-300">
+                      {item.title}
+                    </h4>
+                    <p className="text-xs text-zinc-400 font-light leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -198,7 +296,7 @@ export default function AboutPage() {
         <div className="space-y-10">
           <div className="text-center max-w-xl mx-auto space-y-2">
             <h3 className="text-3xl font-black uppercase text-zinc-100">THE CREATIVE TOOLKIT</h3>
-            <p className="text-xs text-zinc-500 font-light">Explore the software, gear, and models driving my post-production engine.</p>
+            <p className="text-xs text-zinc-555 font-light">Explore the software, gear, and models driving my post-production engine.</p>
           </div>
 
           {/* Toggle Tabs */}
@@ -223,11 +321,20 @@ export default function AboutPage() {
           </div>
 
           {/* Cards Grid (Mobile Swipeable, Desktop Grid) */}
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:pb-0 relative z-10">
+          <div 
+            onScroll={handleScrollToolkit}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:pb-0 relative z-10"
+          >
             {tools[activeCategory].map((tool, idx) => (
               <div
                 key={idx}
-                className="snap-center shrink-0 w-[85%] aspect-square sm:w-[48%] md:w-auto md:shrink md:aspect-square p-6 rounded-2xl bg-[#0c0c0e]/90 border border-zinc-800/80 hover:border-[#22d3ee]/20 hover:bg-[#121216]/90 hover:shadow-[0_12px_35px_-6px_rgba(34,211,238,0.15)] hover:translate-y-[-4px] transition-all duration-300 relative overflow-hidden group flex flex-col justify-between"
+                className={`snap-center shrink-0 w-[85%] aspect-square sm:w-[48%] md:w-auto md:shrink md:aspect-square p-6 rounded-2xl bg-[#0c0c0e]/90 border hover:bg-[#121216]/90 hover:shadow-[0_12px_35px_-6px_rgba(34,211,238,0.15)] hover:translate-y-[-4px] transition-all duration-500 ease-out relative overflow-hidden group flex flex-col justify-between
+                  ${idx === activeIndexToolkit
+                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_25px_rgba(34,211,238,0.15)] z-20'
+                    : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 pointer-events-none z-10'
+                  }
+                  md:scale-100 md:opacity-100 md:border-zinc-800/80 hover:border-[#22d3ee]/20
+                `}
               >
                 {/* Dim background image */}
                 <img 
@@ -276,19 +383,30 @@ export default function AboutPage() {
               {timeline.map((item, idx) => (
                 <div key={idx} className={`relative flex flex-col md:flex-row items-start ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                   {/* Timeline Dot */}
-                  <div className="absolute left-[-21px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-10 h-10 rounded-full bg-[#0c0c0e] border-2 border-zinc-800 flex items-center justify-center text-xs font-bold text-[#22d3ee] shadow-lg z-20">
+                  <div className="absolute left-[-21px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-10 h-10 rounded-full bg-[#0c0c0e] border-2 border-[#22d3ee]/40 flex items-center justify-center text-xs font-bold text-[#22d3ee] shadow-[0_0_15px_rgba(34,211,238,0.2)] z-20">
                     {item.year.slice(2)}
                   </div>
 
                   {/* Spacer for layout grid */}
                   <div className="w-full md:w-1/2 px-8 hidden md:block" />
 
-                  {/* Timeline Card */}
+                  {/* Timeline Card with background image */}
                   <div className="w-full md:w-1/2 px-8 relative z-10">
-                    <div className="p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-zinc-700 transition-all duration-300 space-y-2">
-                      <span className="text-xs font-bold text-[#22d3ee]/80 font-mono tracking-widest">{item.year}</span>
-                      <h4 className="text-lg font-bold text-zinc-100 uppercase">{item.title}</h4>
-                      <p className="text-xs text-zinc-400 font-light leading-relaxed">{item.desc}</p>
+                    <div className="relative p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/30 transition-all duration-500 space-y-2 overflow-hidden group hover:shadow-[0_8px_30px_rgba(34,211,238,0.08)]">
+                      {/* Background image */}
+                      <img
+                        src={timelineImages[idx]}
+                        alt={item.title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-30 group-hover:scale-105 transition-all duration-700 z-0 pointer-events-none select-none filter grayscale contrast-125"
+                      />
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0e] via-[#0c0c0e]/85 to-[#0c0c0e]/50 z-0 pointer-events-none" />
+                      {/* Content */}
+                      <div className="relative z-10 space-y-2">
+                        <span className="text-xs font-bold text-[#22d3ee]/80 font-mono tracking-widest">{item.year}</span>
+                        <h4 className="text-lg font-bold text-zinc-100 uppercase group-hover:text-[#22d3ee] transition-colors duration-300">{item.title}</h4>
+                        <p className="text-xs text-zinc-400 font-light leading-relaxed">{item.desc}</p>
+                      </div>
                     </div>
                   </div>
                 </div>

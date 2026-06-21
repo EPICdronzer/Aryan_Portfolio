@@ -63,6 +63,20 @@ export default function Inquiry() {
             </p>
           </div>
 
+          {/* Decorative visual strip between heading and FAQs */}
+          <div className="relative h-32 rounded-2xl overflow-hidden border border-zinc-800/60 bg-zinc-950/40 select-none pointer-events-none group">
+            <img
+              src="/faq_graphic.png"
+              alt="Visual graphic"
+              className="absolute inset-0 w-full h-full object-cover object-center opacity-30 group-hover:opacity-45 transition-opacity duration-500 filter contrast-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-transparent to-[#070709] pointer-events-none" />
+            <div className="absolute inset-0 flex items-center px-6 gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22d3ee] animate-pulse" />
+              <span className="text-[10px] font-black tracking-[0.3em] text-zinc-400 uppercase">AI · Post-Production · Generative Video</span>
+            </div>
+          </div>
+
           {/* Accordion List */}
           <div className="border-t border-zinc-800/60 divide-y divide-zinc-800/60 pt-4">
             {faqs.map((faq, index) => {
@@ -121,61 +135,14 @@ export default function Inquiry() {
             </div>
 
             <div className="space-y-6 relative z-10">
-              {/* Hire me action area */}
-              {!showForm ? (
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="w-full px-8 py-3.5 rounded-full text-xs font-bold tracking-widest text-black bg-white hover:bg-[#22d3ee] active:scale-95 transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.05)] uppercase cursor-pointer"
-                >
-                  Hire Me
-                </button>
-              ) : (
-                <div className="transition-all duration-500 ease-out overflow-hidden max-h-[400px] space-y-4 animate-slide-down">
-                  <form onSubmit={handleWhatsAppSubmit} className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="block text-[9px] font-bold uppercase tracking-wider text-zinc-500">
-                        Your Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. John Doe"
-                        className="w-full px-4 py-3 text-xs text-zinc-100 placeholder-zinc-700 bg-zinc-950/60 border border-zinc-800/80 rounded-lg focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all duration-300"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[9px] font-bold uppercase tracking-wider text-zinc-500">
-                        Your Email
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="e.g. john@company.com"
-                        className="w-full px-4 py-3 text-xs text-zinc-100 placeholder-zinc-700 bg-zinc-950/60 border border-zinc-800/80 rounded-lg focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all duration-300"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full px-8 py-3 rounded-full text-xs font-bold tracking-widest text-black bg-[#22d3ee] hover:bg-[#06b6d4] active:scale-95 transition-all duration-300 shadow-[0_4px_15px_rgba(34,211,238,0.2)] uppercase cursor-pointer"
-                    >
-                      WhatsApp Me
-                    </button>
-                  </form>
-
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="w-full text-center text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:text-white transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
+              <a
+                href={`https://wa.me/${CONFIG.phone}?text=${encodeURIComponent("Hi Aryan! I'd like to hire you. Let's discuss my project!")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center px-8 py-3.5 rounded-full text-xs font-bold tracking-widest text-black bg-white hover:bg-[#22d3ee] active:scale-95 transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.05)] uppercase cursor-pointer"
+              >
+                Hire Me
+              </a>
 
               {/* Email Footer info */}
               <div className="border-t border-zinc-800/60 pt-6 space-y-1">

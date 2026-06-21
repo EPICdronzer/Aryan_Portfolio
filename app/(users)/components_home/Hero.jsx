@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { CONFIG } from '@/config';
 
 export default function Hero() {
   const [time, setTime] = useState('');
@@ -152,13 +153,11 @@ export default function Hero() {
         </svg>
       </div>
 
-      {/* 3. Badges and Text Elements positioned around the rings */}
-      {/* Top Left: Role badge */}
-      {/* <div className="absolute top-[18%] left-[5%] md:left-[10%] lg:left-[15%] flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#16161a]/60 border border-zinc-800/40 backdrop-blur-sm shadow-md pointer-events-auto z-30 select-none">
-        <span className="text-sm">🎬</span>
+      {/* Floating Role Badge: Top Left */}
+      <div className="hidden md:flex absolute top-[18%] left-[5%] md:left-[10%] lg:left-[15%] items-center gap-2 px-3 py-1.5 rounded-full bg-[#16161a]/60 border border-zinc-800/40 backdrop-blur-sm shadow-md pointer-events-auto z-30 select-none">
         <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">AI Video Editor</span>
-      </div> */}
-      
+      </div>
+
       {/* Top Right: Location coordinates (Hidden on Mobile) */}
       <div className="hidden md:block absolute top-[18%] right-[5%] md:right-[10%] lg:right-[15%] text-right pointer-events-auto z-30 select-none">
         <span className="block text-[11px] font-black tracking-widest text-[#22d3ee] uppercase">
@@ -168,17 +167,17 @@ export default function Hero() {
           New Delhi, India
         </span>
       </div>
-{/* 
-      
 
-      <div className="absolute top-[48%] right-[5%] md:right-[10%] lg:right-[15%] flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#16161a]/60 border border-zinc-800/40 backdrop-blur-sm shadow-md pointer-events-auto z-30 select-none">
-        <span className="text-sm">🤖</span>
+      {/* Floating Generative Creator badge: Right mid */}
+      <div className="hidden md:flex absolute top-[48%] right-[5%] md:right-[10%] lg:right-[15%] items-center gap-2 px-3 py-1.5 rounded-full bg-[#16161a]/60 border border-zinc-800/40 backdrop-blur-sm shadow-md pointer-events-auto z-30 select-none">
         <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">Generative Creator</span>
-      </div> */}
+      </div>
 
-      
-
-        
+      {/* Floating stats badge: Left mid */}
+      <div className="hidden lg:flex absolute top-[48%] left-[5%] lg:left-[12%] flex-col gap-1 px-4 py-3 rounded-2xl bg-[#16161a]/60 border border-zinc-800/40 backdrop-blur-sm shadow-md pointer-events-auto z-30 select-none">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Campaign Views</span>
+        <span className="text-xl font-black text-[#22d3ee] tracking-tight">980K+</span>
+      </div>
 
       {/* 4. Center Portrait and Name Overlay (Strict layering) */}
       <div className="relative w-full max-w-4xl flex flex-col items-center justify-end z-20">
@@ -211,7 +210,9 @@ export default function Hero() {
           {/* CTA Buttons Row (Clickable) */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 w-full max-w-md px-6 pointer-events-auto">
             <a 
-              href="#contact"
+              href={`https://wa.me/${CONFIG.phone}?text=${encodeURIComponent("Hi Aryan! I'd like to hire you for a project. Let's talk!")}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs font-bold tracking-widest text-black bg-[#22d3ee] hover:bg-[#06b6d4] active:scale-95 transition-all duration-300 shadow-[0_4px_15px_rgba(34,211,238,0.25)] uppercase cursor-pointer"
             >
               HIRE ME!

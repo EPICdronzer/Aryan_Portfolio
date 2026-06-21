@@ -25,7 +25,7 @@ export default function Footer() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22d3ee] to-[#3b82f6]">Vision to Life</span>
             </h2>
             <p className="text-zinc-400 text-sm md:text-base font-light">
-              Every campaign has a story — we're here to capture yours. Blending DaVinci Resolve precision with Kling, Sora 2, and Veo generative AI to create high-retention video content. 🎥
+              Every campaign has a story — we're here to capture yours. Blending DaVinci Resolve precision with Kling, Higgsfield, and Veo generative AI to create high-retention video content. 🎥
             </p>
           </div>
           
@@ -97,13 +97,13 @@ export default function Footer() {
 
           {/* Col 3: AI Stack */}
           <div className="space-y-4">
-            <h4 className="text-xs uppercase tracking-widest text-zinc-300 font-bold">AI & Edit Stack</h4>
+            <h4 className="text-xs uppercase tracking-widest text-zinc-300 font-bold">AI &amp; Edit Stack</h4>
             <ul className="space-y-2.5 text-xs text-zinc-400">
               <li><span className="text-zinc-500 font-light">DaVinci Resolve Studio</span></li>
-              <li><span className="text-zinc-500 font-light">Sora 2 (OpenAI)</span></li>
+              <li><span className="text-zinc-500 font-light">Higgsfield AI</span></li>
               <li><span className="text-zinc-500 font-light">Kling AI Pro</span></li>
               <li><span className="text-zinc-500 font-light">Google Veo</span></li>
-              <li><span className="text-zinc-500 font-light">Adobe Premiere / AE</span></li>
+              <li><span className="text-zinc-500 font-light">Claude AI</span></li>
             </ul>
           </div>
 

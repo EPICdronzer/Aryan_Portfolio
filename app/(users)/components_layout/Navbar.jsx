@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CONFIG } from '@/config';
 
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -57,11 +58,12 @@ export default function Navbar() {
             <Link href="/" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Home
             </Link>
-            <Link href="/portfolio" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
-              Work
-            </Link>
+            
             <Link href="/about" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               About
+            </Link>
+            <Link href="/portfolio" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+              Work
             </Link>
             <Link href="/services" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Services
@@ -72,12 +74,14 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:block">
-            <Link
-              href="/contact"
+            <a
+              href={`https://wa.me/${CONFIG.phone}?text=${encodeURIComponent("Hi Aryan! I'd like to discuss a project with you.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-white border border-zinc-700 hover:border-[#22d3ee] hover:bg-[#22d3ee]/10 active:scale-95 transition-all duration-300"
             >
               Let's Talk
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Toggle Button */}

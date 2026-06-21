@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 // Helper: extract YouTube video ID from any YouTube URL (watch or shorts)
 function getYTId(url) {
@@ -102,10 +102,11 @@ function VideoSkeletonCard({ title = "Campaign Preview" }) {
   );
 }
 
-function Carousel({ children }) {
+export function Carousel({ children }) {
   const containerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const checkScrollLimits = () => {
     if (!containerRef.current) return;
@@ -114,21 +115,42 @@ function Carousel({ children }) {
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
   };
 
+  const handleScrollEvent = (e) => {
+    checkScrollLimits();
+    
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndex(activeIdx);
+  };
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     checkScrollLimits();
 
-    // Attach scroll and resize event listeners
-    container.addEventListener('scroll', checkScrollLimits);
+    container.addEventListener('scroll', handleScrollEvent);
     window.addEventListener('resize', checkScrollLimits);
 
-    // Run a quick double check after mount to account for render timings
     const timer = setTimeout(checkScrollLimits, 300);
 
     return () => {
-      container.removeEventListener('scroll', checkScrollLimits);
+      container.removeEventListener('scroll', handleScrollEvent);
       window.removeEventListener('resize', checkScrollLimits);
       clearTimeout(timer);
     };
@@ -140,7 +162,6 @@ function Carousel({ children }) {
     const card = container.firstElementChild;
     if (!card) return;
 
-    // Width of card + gap spacing (gap-4 is 16px)
     const cardWidth = card.getBoundingClientRect().width + 16;
     const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
 
@@ -155,7 +176,17 @@ function Carousel({ children }) {
         className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-4 select-none scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {children}
+        {React.Children.map(children, (child, idx) => {
+          if (!child) return null;
+          const isActive = idx === activeIndex;
+          return React.cloneElement(child, {
+            className: `${child.props.className || ''} transition-all duration-500 ease-out snap-center shrink-0 ${
+              isActive
+                ? 'max-md:scale-100 max-md:opacity-100 max-md:z-20'
+                : 'max-md:scale-[0.92] max-md:opacity-40 max-md:z-10'
+            }`
+          });
+        })}
       </div>
 
       {/* Left Button */}
@@ -196,29 +227,31 @@ const tools = [
     desc: "Color Grading & Post-production",
     icon: (
       <svg viewBox="0 0 100 100" className="w-9 h-9">
-        <circle cx="50" cy="36" r="20" fill="#ef4444" opacity="0.95" />
-        <circle cx="36" cy="62" r="20" fill="#22c55e" opacity="0.95" />
-        <circle cx="64" cy="62" r="20" fill="#3b82f6" opacity="0.95" />
+        <g transform="translate(50,50) scale(0.9)">
+          <path d="M0,0 C10,-25 35,-25 30,-5 C25,10 10,10 0,0" fill="#ef4444" />
+          <path d="M0,0 C10,-25 35,-25 30,-5 C25,10 10,10 0,0" fill="#22c55e" transform="rotate(120)" />
+          <path d="M0,0 C10,-25 35,-25 30,-5 C25,10 10,10 0,0" fill="#3b82f6" transform="rotate(240)" />
+        </g>
       </svg>
     )
   },
   {
-    name: "Premiere Pro",
+    name: "Claude",
     level: "98%",
-    desc: "High-speed Cut & Assembly",
+    desc: "AI Scriptwriting & Hook Ideation",
     icon: (
-      <div className="w-9 h-9 bg-[#110022] border border-[#ea77ff]/60 rounded-lg flex items-center justify-center font-bold text-xs text-[#ea77ff] select-none font-sans">
-        Pr
+      <div className="w-9 h-9 bg-[#1a120b] border border-[#d97706]/60 rounded-lg flex items-center justify-center font-bold text-xs text-[#d97706] select-none font-sans">
+        Cl
       </div>
     )
   },
   {
-    name: "After Effects",
+    name: "Higgsfield",
     level: "94%",
-    desc: "Motion Design & VFX",
+    desc: "AI Generative Video & Camera Motion",
     icon: (
-      <div className="w-9 h-9 bg-[#0b001a] border border-[#d580ff]/60 rounded-lg flex items-center justify-center font-bold text-xs text-[#d580ff] select-none font-sans">
-        Ae
+      <div className="w-9 h-9 bg-[#0b1a10] border border-[#10b981]/60 rounded-lg flex items-center justify-center font-bold text-xs text-[#10b981] select-none font-sans">
+        Hf
       </div>
     )
   },

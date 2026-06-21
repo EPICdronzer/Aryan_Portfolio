@@ -8,6 +8,28 @@ export default function ServicesPage() {
   const [longForm, setLongForm] = useState(1);
   const [addThumbnails, setAddThumbnails] = useState(false);
   const [addStrategy, setAddStrategy] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(1);
+
+  const handleScroll = (e) => {
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndex(activeIdx);
+  };
 
   const services = [
     {
@@ -109,12 +131,21 @@ export default function ServicesPage() {
         </div>
 
         {/* Core Services Grid (Mobile Swipeable, Desktop Grid) */}
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:pb-0 relative z-10">
+        <div 
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:pb-0 relative z-10"
+        >
           {services.map((s, idx) => (
             <div
               key={idx}
               onClick={() => handleServiceWhatsAppRedirect(s.title)}
-              className="snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-8 rounded-3xl bg-[#0c0c0e]/95 border border-zinc-800/80 hover:border-[#22d3ee]/20 hover:bg-[#121216]/95 transition-all duration-300 flex flex-col justify-between group shadow-lg relative overflow-hidden min-h-[220px] cursor-pointer"
+              className={`snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-8 rounded-3xl bg-[#0c0c0e]/95 border shadow-lg relative overflow-hidden min-h-[220px] cursor-pointer transition-all duration-500 ease-out
+                ${idx === activeIndex
+                  ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_30px_rgba(34,211,238,0.15)] z-20'
+                  : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 pointer-events-none z-10'
+                }
+                md:scale-100 md:opacity-100 md:border-zinc-800/80 hover:border-[#22d3ee]/20 hover:bg-[#121216]/95
+              `}
             >
               {/* Dim background image */}
               <img 

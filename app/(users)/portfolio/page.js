@@ -183,10 +183,20 @@ const btsStages = {
 
 // ── page ────────────────────────────────────────────────────────────────────
 export default function PortfolioPage() {
-  const [filter, setFilter]     = useState('all');
-  const [editStage, setEditStage] = useState('raw');
+  const [filter, setFilter]           = useState('all');
+  const [editStage, setEditStage]     = useState('raw');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const filtered = filter === 'all' ? projects : projects.filter(p => p.category === filter);
+  const filtered = projects.filter((p) => {
+    const matchesCategory = filter === 'all' || p.category === filter;
+    const matchesSearch =
+      searchQuery === '' ||
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.tag.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="relative pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white">
@@ -211,25 +221,107 @@ export default function PortfolioPage() {
           </p>
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto relative z-20">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setFilter(cat.id)}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-all duration-300 cursor-pointer shadow-md ${
-                filter === cat.id
-                  ? 'bg-[#22d3ee]/15 border-[#22d3ee]/45 text-[#22d3ee] shadow-[0_0_15px_rgba(34,211,238,0.15)]'
-                  : 'bg-[#0c0c0e]/85 border-zinc-800/80 text-zinc-400 hover:border-zinc-700 hover:text-white'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        {/* Search & Filter Container */}
+        <div className="max-w-xl mx-auto space-y-4 relative z-20">
+          <div className="relative flex items-center bg-[#0c0c0e]/90 border border-zinc-800/80 rounded-2xl p-1.5 focus-within:border-cyan-500/50 focus-within:shadow-[0_0_20px_rgba(34,211,238,0.12)] transition-all duration-300">
+            {/* Search Icon */}
+            <div className="pl-3.5 pr-2 text-zinc-500 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-zinc-500 focus-within:text-[#22d3ee] transition-colors">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </div>
+            
+            {/* Search Input */}
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowFilters(true);
+              }}
+              onClick={() => setShowFilters(true)}
+              onFocus={() => setShowFilters(true)}
+              placeholder="Search projects..."
+              className="w-full bg-transparent border-none text-zinc-200 placeholder-zinc-600 focus:outline-none text-xs py-2 px-1"
+            />
+            
+            {/* Action buttons (Clear / Filter toggle) */}
+            <div className="flex items-center gap-2 pr-2">
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 rounded-lg hover:bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+              
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`px-3 py-1.5 rounded-xl border text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-300 cursor-pointer ${
+                  showFilters
+                    ? 'bg-[#22d3ee]/10 border-[#22d3ee]/40 text-[#22d3ee]'
+                    : 'bg-zinc-950/40 border-zinc-850 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                </svg>
+                <span>Filters</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Filters List (Category buttons) */}
+          <div 
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              showFilters 
+                ? 'max-h-24 opacity-100 translate-y-0 visible' 
+                : 'max-h-0 opacity-0 -translate-y-2 invisible pointer-events-none'
+            }`}
+          >
+            <div className="flex flex-wrap justify-center gap-2 pt-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setFilter(cat.id)}
+                  className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all duration-300 cursor-pointer ${
+                    filter === cat.id
+                      ? 'bg-[#22d3ee]/15 border-[#22d3ee]/45 text-[#22d3ee] shadow-[0_0_12px_rgba(34,211,238,0.15)]'
+                      : 'bg-[#0c0c0e]/85 border-zinc-800/80 text-zinc-400 hover:border-zinc-700 hover:text-white'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Video Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Video Grid or Empty State */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16 border border-zinc-850 rounded-3xl bg-[#0c0c0e]/60 max-w-lg mx-auto space-y-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-zinc-650 mx-auto">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-wide">No projects found</h4>
+              <p className="text-xs text-zinc-555 font-light">Try adjusting your search terms or clearing the selected category.</p>
+            </div>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setFilter('all');
+              }}
+              className="px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-cyan-500/40 hover:text-[#22d3ee] transition-all cursor-pointer"
+            >
+              Reset Search & Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map((p) => (
             <div
               key={p.url}
@@ -263,7 +355,8 @@ export default function PortfolioPage() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Behind the Scenes Simulator */}
         <div className="p-8 md:p-12 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 space-y-10 relative overflow-hidden shadow-2xl">
@@ -303,9 +396,38 @@ export default function PortfolioPage() {
             </div>
 
             <div className="space-y-4">
-              <div className={`p-8 rounded-2xl border-2 transition-all duration-500 min-h-[260px] flex flex-col justify-between ${btsStages[editStage].color}`}>
-                <div className="space-y-4">
-                  <h4 className="text-lg font-black uppercase tracking-wide">{btsStages[editStage].title}</h4>
+              {/* Stage Image Preview */}
+              <div className="relative rounded-2xl overflow-hidden border border-zinc-800/60 shadow-[0_16px_48px_rgba(0,0,0,0.8)] bg-zinc-950/60 aspect-video">
+                <img
+                  key={editStage}
+                  src={
+                    editStage === 'raw'
+                      ? '/stage_raw_cuts.png'
+                      : editStage === 'graded'
+                      ? '/stage_color_grading.png'
+                      : '/stage_sound_design.png'
+                  }
+                  alt={`Stage preview: ${btsStages[editStage].title}`}
+                  className="absolute inset-0 w-full h-full object-cover filter contrast-110 brightness-80 transition-all duration-700"
+                />
+                {/* Scanline effect */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.18)_50%)] bg-[size:100%_4px] opacity-20 pointer-events-none" />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+                {/* Stage badge */}
+                <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border backdrop-blur-sm ${btsStages[editStage].color}`}>
+                  {editStage === 'raw' ? 'Stage 01' : editStage === 'graded' ? 'Stage 02' : 'Stage 03'}
+                </div>
+                {/* Live indicator */}
+                <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Live Preview</span>
+                </div>
+              </div>
+
+              <div className={`p-6 rounded-2xl border-2 transition-all duration-500 ${btsStages[editStage].color}`}>
+                <div className="space-y-3">
+                  <h4 className="text-base font-black uppercase tracking-wide">{btsStages[editStage].title}</h4>
                   <p className="text-xs font-light leading-relaxed">{btsStages[editStage].action}</p>
                 </div>
                 <div className="border-t border-zinc-900/60 pt-4 mt-4 space-y-1">
