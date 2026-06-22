@@ -227,6 +227,290 @@ export function Carousel({ children }) {
   );
 }
 
+// ---------------------------------------------------------------------
+// Interactive "Retention Curve" — a real 60-second edit timeline you can
+// scrub through. Every beat shows the exact technique (cut, grade, sound,
+// pace) being used at that second, with a live retention line to match.
+// This is the one truly interactive, hand-built moment on the page — it
+// turns "I edit for retention" into something a visitor can actually play
+// with rather than just read.
+// ---------------------------------------------------------------------
+const RETENTION_BEATS = [
+  { time: 0,  tag: 'HOOK',    title: 'Pattern Interrupt', desc: 'Cold open mid-action. No logo, no intro card — the first frame is already the payoff.', value: 100 },
+  { time: 3,  tag: 'PROMISE', title: 'The Promise, Stated', desc: 'One sentence names exactly what the viewer gets and how long it takes to get it.', value: 97 },
+  { time: 8,  tag: 'CUT',     title: 'Visual Reset', desc: 'A jump-cut and an AI-generated b-roll insert break the frame before the first natural drop-off point.', value: 89 },
+  { time: 18, tag: 'PACE',    title: 'Tension Beat', desc: 'Pacing deliberately slows for a moment — a held breath that makes the next cut land harder.', value: 84 },
+  { time: 27, tag: 'GRADE',   title: 'Color Punch', desc: 'A saturation shift in the grade marks the turn, signaling something changed before the line does.', value: 90 },
+  { time: 41, tag: 'AUDIO',   title: 'The Sting', desc: "A single foley hit re-grabs attention that's started to wander past the 40-second wall.", value: 82 },
+  { time: 55, tag: 'PAYOFF',  title: 'Payoff + Soft CTA', desc: 'The promise from second three pays off, and the CTA rides the high point instead of interrupting it.', value: 79 },
+];
+const TOTAL_DURATION = 60;
+const PLATFORM_AVG = 38;
+
+// Chart geometry, in SVG viewBox units
+const CHART_X0 = 30, CHART_X1 = 670, CHART_Y0 = 28, CHART_Y1 = 210;
+const xForTime = (t) => CHART_X0 + (t / TOTAL_DURATION) * (CHART_X1 - CHART_X0);
+const yForValue = (v) => CHART_Y1 - (v / 100) * (CHART_Y1 - CHART_Y0);
+
+// Lightweight Catmull-Rom -> cubic Bezier smoothing so the line reads as
+// a real curve rather than a jagged connect-the-dots chart.
+function smoothPath(points) {
+  if (points.length < 2) return '';
+  let d = `M ${points[0].x},${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i === 0 ? i : i - 1];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2 < points.length ? i + 2 : i + 1];
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+  }
+  return d;
+}
+
+function formatTime(t) {
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function RetentionCurve() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const trackRef = useRef(null);
+  const resumeTimer = useRef(null);
+
+  // Don't auto-animate for people who've asked for reduced motion —
+  // they can still scrub manually any time.
+  useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) setIsAutoPlaying(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const id = setInterval(() => {
+      setActiveIdx((i) => (i + 1) % RETENTION_BEATS.length);
+    }, 3200);
+    return () => clearInterval(id);
+  }, [isAutoPlaying]);
+
+  useEffect(() => () => clearTimeout(resumeTimer.current), []);
+
+  const pauseThenResume = () => {
+    setIsAutoPlaying(false);
+    clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => setIsAutoPlaying(true), 7000);
+  };
+
+  const jumpToClientX = (clientX) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    const time = fraction * TOTAL_DURATION;
+    let nearest = 0;
+    let minDist = Infinity;
+    RETENTION_BEATS.forEach((b, i) => {
+      const dist = Math.abs(b.time - time);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = i;
+      }
+    });
+    setActiveIdx(nearest);
+  };
+
+  const onTrackPointerDown = (e) => {
+    pauseThenResume();
+    jumpToClientX(e.clientX);
+    const onMove = (ev) => jumpToClientX(ev.clientX);
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
+  const points = RETENTION_BEATS.map((b) => ({ x: xForTime(b.time), y: yForValue(b.value) }));
+  const lastBeat = RETENTION_BEATS[RETENTION_BEATS.length - 1];
+  const fullPoints = [...points, { x: xForTime(TOTAL_DURATION), y: yForValue(lastBeat.value) }];
+
+  const linePath = smoothPath(fullPoints);
+  const areaPath = `${linePath} L ${fullPoints[fullPoints.length - 1].x},${CHART_Y1} L ${fullPoints[0].x},${CHART_Y1} Z`;
+
+  const active = RETENTION_BEATS[activeIdx];
+  const avgY = yForValue(PLATFORM_AVG);
+
+  return (
+    <div className="space-y-8 border-t border-zinc-900/60 pt-16">
+      <div className="text-center max-w-xl mx-auto space-y-3">
+        <span className="text-[10px] font-black tracking-[0.25em] text-[#22d3ee] uppercase block">
+          Scrub The Timeline
+        </span>
+        <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-100 font-sans">
+          The Retention Curve
+        </h3>
+        <p className="text-zinc-400 text-xs md:text-sm font-light leading-relaxed">
+          Every cut, color shift, and sound hit in a 60-second edit is a decision aimed at one number. Drag the scrubber below to see what's happening on screen at each beat — and why the line holds instead of falling off a cliff.
+        </p>
+      </div>
+
+      <div className="relative rounded-3xl border border-zinc-800/80 bg-[#0c0c0e]/60 p-6 md:p-10 overflow-hidden">
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-cyan-500/[0.05] rounded-full blur-[60px] pointer-events-none" />
+
+        {/* Live readout row */}
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-6 relative z-10">
+          <div className="flex items-baseline gap-3">
+            <span className="text-5xl md:text-6xl font-black text-[#22d3ee] tabular-nums">
+              {active.value}%
+            </span>
+            <span className="text-zinc-500 text-[10px] md:text-xs font-bold uppercase tracking-widest pb-1 leading-snug">
+              audience<br />retention
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">vs. platform avg</p>
+              <p className="text-sm font-bold text-zinc-300">{PLATFORM_AVG}%</p>
+            </div>
+            <button
+              onClick={() => {
+                if (isAutoPlaying) {
+                  setIsAutoPlaying(false);
+                  clearTimeout(resumeTimer.current);
+                } else {
+                  setIsAutoPlaying(true);
+                }
+              }}
+              aria-label={isAutoPlaying ? 'Pause autoplay' : 'Resume autoplay'}
+              className="w-9 h-9 rounded-full bg-zinc-950/90 border border-zinc-800 text-zinc-300 hover:border-[#22d3ee] hover:text-[#22d3ee] flex items-center justify-center transition-all duration-300 shrink-0 cursor-pointer"
+            >
+              {isAutoPlaying ? (
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+                  <rect x="6" y="5" width="4" height="14" />
+                  <rect x="14" y="5" width="4" height="14" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+                  <path d="M7 5l12 7-12 7V5z" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Graph */}
+        <div className="relative z-10">
+          <svg viewBox="0 0 700 230" className="w-full h-[180px] md:h-[230px] overflow-visible">
+            <defs>
+              <linearGradient id="retentionFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+
+            {/* Platform average reference line */}
+            <line x1={CHART_X0} y1={avgY} x2={CHART_X1} y2={avgY} stroke="#3f3f46" strokeWidth="1" strokeDasharray="4 5" />
+            <text x={CHART_X1} y={avgY - 8} textAnchor="end" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', fill: '#71717a' }}>
+              SHORT-FORM AVG · {PLATFORM_AVG}%
+            </text>
+
+            {/* Area + line */}
+            <path d={areaPath} fill="url(#retentionFill)" />
+            <path d={linePath} fill="none" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" />
+
+            {/* Markers */}
+            {points.map((p, i) => {
+              const isActive = i === activeIdx;
+              return (
+                <g
+                  key={RETENTION_BEATS[i].time}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    pauseThenResume();
+                    setActiveIdx(i);
+                  }}
+                >
+                  {isActive && <circle cx={p.x} cy={p.y} r="10" fill="#22d3ee" opacity="0.18" />}
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={isActive ? 5.5 : 3.5}
+                    fill={isActive ? '#22d3ee' : '#3f3f46'}
+                    stroke="#070709"
+                    strokeWidth="1.5"
+                  />
+                </g>
+              );
+            })}
+
+            {/* Scrub line down to the active marker */}
+            <line
+              x1={points[activeIdx].x}
+              y1={points[activeIdx].y}
+              x2={points[activeIdx].x}
+              y2={CHART_Y1}
+              stroke="#22d3ee"
+              strokeWidth="1"
+              strokeDasharray="2 4"
+              opacity="0.5"
+            />
+          </svg>
+
+          {/* Timeline scrub track */}
+          <div
+            ref={trackRef}
+            onPointerDown={onTrackPointerDown}
+            className="relative h-8 mt-2 cursor-pointer touch-none select-none"
+          >
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 rounded-full bg-zinc-800/80" />
+            <div
+              className="absolute top-1/2 -translate-y-1/2 left-0 h-1 rounded-full bg-[#22d3ee]/60"
+              style={{ width: `${(active.time / TOTAL_DURATION) * 100}%` }}
+            />
+            {RETENTION_BEATS.map((b, i) => (
+              <div
+                key={b.time}
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
+                style={{ left: `${(b.time / TOTAL_DURATION) * 100}%` }}
+              >
+                <span
+                  className={`block rounded-full transition-all duration-300 ${
+                    i === activeIdx
+                      ? 'w-3.5 h-3.5 bg-[#22d3ee] shadow-[0_0_10px_rgba(34,211,238,0.6)]'
+                      : 'w-2 h-2 bg-zinc-600'
+                  }`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between text-[10px] font-mono text-zinc-600 mt-1">
+            <span>0:00</span>
+            <span>1:00</span>
+          </div>
+        </div>
+
+        {/* Callout card for the active beat */}
+        <div className="relative z-10 mt-8 rounded-2xl border border-zinc-800/60 bg-zinc-950/60 p-5 md:p-6">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
+            <span className="text-[10px] font-mono text-zinc-500">{formatTime(active.time)}</span>
+            <span className="text-[10px] font-black text-[#22d3ee] uppercase tracking-widest">{active.tag}</span>
+          </div>
+          <h4 className="text-base md:text-lg font-bold text-zinc-100">{active.title}</h4>
+          <p className="text-xs md:text-sm text-zinc-400 font-light leading-relaxed mt-1.5 max-w-xl">{active.desc}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const tools = [
   {
     name: "DaVinci Resolve",
@@ -507,6 +791,9 @@ export default function Showcase() {
             ))}
           </Carousel>
         </div>
+
+        {/* Interactive: The Retention Curve — sits right after Content IP */}
+        <RetentionCurve />
 
         {/* Section 1: Informative and Tutorials */}
         <div className="space-y-8">
