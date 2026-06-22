@@ -73,17 +73,17 @@ export default function ContactPage() {
         
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-950/80 border border-zinc-800/80 text-[10px] font-mono text-zinc-400 tracking-widest uppercase mb-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#22d3ee] animate-pulse" />
+          
+            <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase">
             04 / CONTACT DATABASE
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
+          </span>
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
             START YOUR VIRAL<br />
-            <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.45)', color: 'transparent' }}>
+            <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}>
               VIDEO CAMPAIGN
             </span>
           </h2>
-          <p className="text-zinc-400 text-xs md:text-sm font-light leading-relaxed max-w-xl mx-auto pt-2">
+          <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed max-w-2xl mx-auto pt-2">
             Let's design a high-retention video funnel for your brand. Submit details below or book a calendar slot directly.
           </p>
         </div>

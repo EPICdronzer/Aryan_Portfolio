@@ -471,7 +471,43 @@ export default function Showcase() {
       <div className="absolute bottom-[20%] left-0 w-[50%] h-[350px] bg-gradient-to-t from-cyan-950/10 to-transparent rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto space-y-24 relative z-10">
-        
+        {/* adding content ip */}
+        <div className="space-y-8">
+          <div className="text-center max-w-xl mx-auto space-y-3">
+            <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-100 font-sans">
+              Content IP
+            </h3>
+            <p className="text-zinc-400 text-xs md:text-sm font-light leading-relaxed">
+              Building and curating original content experiences through professional video editing at Galaxy AI and self-created digital storytelling projects.
+            </p>
+          </div>
+
+          <Carousel>
+            {[
+              {
+                url: 'https://youtu.be/Zl6qP3ndPkk?si=m-ded9YT-Le8Ojcd',
+                title: 'Magica AI for Content Creation'
+              },
+              {
+                url: 'https://youtu.be/KOh9e5XZSD0?si=0a91KE4NjQO18YT2',
+                title: 'Magica AI for Marketing'
+              },
+              {
+                url: 'https://youtu.be/eyDbHqLTZgo?si=RKvC4fs0oQVc7Kxo',
+                title: 'Magica AI for Students'
+              },
+              {
+                url: 'https://youtu.be/T_EW2Xn46H8?si=JDKLV5G7zXVt-1jl',
+                title: 'Magica AI for Fitness'
+              }
+            ].map((v) => (
+              <div key={v.url} className="w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.67px)] lg:w-[calc(25%-12px)] shrink-0 snap-start aspect-square">
+                <YouTubeCard url={v.url} title={v.title} />
+              </div>
+            ))}
+          </Carousel>
+        </div>
+
         {/* Section 1: Informative and Tutorials */}
         <div className="space-y-8">
           <div className="text-center max-w-xl mx-auto space-y-3">

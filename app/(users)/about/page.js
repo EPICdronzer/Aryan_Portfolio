@@ -284,7 +284,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="relative pt-24 pb-16 px-6 md:px-20 lg:px-32 text-white">
+    <div className="relative pt-32 pb-16 px-6 md:px-20 lg:px-32 text-white">
       {/* Background radial glow */}
       <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[80%] h-[500px] bg-gradient-to-t from-cyan-950/10 to-transparent rounded-full blur-[150px] pointer-events-none z-0" />
 
