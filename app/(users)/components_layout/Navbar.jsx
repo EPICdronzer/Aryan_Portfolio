@@ -114,7 +114,7 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsOpen(false)} className="flex items-start gap-4 group border-b border-zinc-900/60 pb-3">
             <span className="text-xs font-mono text-[#22d3ee]/60 mt-1.5">00</span>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+              <span className="text-md font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
                 Home
               </span>
               <span className="text-[11px] text-zinc-500 font-light group-hover:text-zinc-300 transition-colors duration-300 mt-1">
@@ -126,7 +126,7 @@ export default function Navbar() {
           <Link href="/about" onClick={() => setIsOpen(false)} className="flex items-start gap-4 group border-b border-zinc-900/60 pb-3">
             <span className="text-xs font-mono text-[#22d3ee]/60 mt-1.5">01</span>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+              <span className="text-md font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
                 About
               </span>
               <span className="text-[11px] text-zinc-500 font-light group-hover:text-zinc-300 transition-colors duration-300 mt-1">
@@ -138,7 +138,7 @@ export default function Navbar() {
           <Link href="/portfolio" onClick={() => setIsOpen(false)} className="flex items-start gap-4 group border-b border-zinc-900/60 pb-3">
             <span className="text-xs font-mono text-[#22d3ee]/60 mt-1.5">02</span>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+              <span className="text-md font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
                 Portfolio
               </span>
               <span className="text-[11px] text-zinc-500 font-light group-hover:text-zinc-300 transition-colors duration-300 mt-1">
@@ -150,7 +150,7 @@ export default function Navbar() {
           <Link href="/services" onClick={() => setIsOpen(false)} className="flex items-start gap-4 group border-b border-zinc-900/60 pb-3">
             <span className="text-xs font-mono text-[#22d3ee]/60 mt-1.5">03</span>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+              <span className="text-md font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
                 Services
               </span>
               <span className="text-[11px] text-zinc-500 font-light group-hover:text-zinc-300 transition-colors duration-300 mt-1">
@@ -162,7 +162,7 @@ export default function Navbar() {
           <Link href="/contact" onClick={() => setIsOpen(false)} className="flex items-start gap-4 group pb-1">
             <span className="text-xs font-mono text-[#22d3ee]/60 mt-1.5">04</span>
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+              <span className="text-md font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
                 Contact
               </span>
               <span className="text-[11px] text-zinc-500 font-light group-hover:text-zinc-300 transition-colors duration-300 mt-1">

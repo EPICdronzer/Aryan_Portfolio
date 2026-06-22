@@ -1,11 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function AboutPage() {
   const [activeCategory, setActiveCategory] = useState('post-production');
-  const [activeIndexPhilosophy, setActiveIndexPhilosophy] = useState(1);
-  const [activeIndexToolkit, setActiveIndexToolkit] = useState(1);
+  const [activeIndexPhilosophy, setActiveIndexPhilosophy] = useState(0);
+  const [activeIndexToolkit, setActiveIndexToolkit] = useState(0);
+  const [activeIndexExperience, setActiveIndexExperience] = useState(0);
+
+  const toolkitScrollRef = useRef(null);
+
+  // Reset toolkit carousel position + active dot whenever the tab changes
+  useEffect(() => {
+    setActiveIndexToolkit(0);
+    if (toolkitScrollRef.current) {
+      toolkitScrollRef.current.scrollTo({ left: 0, behavior: 'instant' });
+    }
+  }, [activeCategory]);
+
+  const handleScrollExperience = (e) => {
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndexExperience(activeIdx);
+  };
 
   const handleScrollPhilosophy = (e) => {
     const container = e.currentTarget;
@@ -51,24 +83,96 @@ export default function AboutPage() {
 
   const philosophy = [
     {
+      tag: 'Retention',
       title: 'Pacing as a Science',
       desc: 'Every visual and audio transition is timed according to user retention dynamics, ensuring high watch rates.',
-      bg: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80'
+      bg: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=900&q=80'
     },
     {
+      tag: 'Generative AI',
       title: 'AI Multiplication',
       desc: 'Using generative Kling/Sora visual models to instantly compose B-roll without sacrificing the creator\'s personal signature.',
-      bg: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80'
+      bg: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=900&q=80'
     },
     {
+      tag: 'Audio Design',
       title: 'Soundscapes',
       desc: 'Layering custom vocal curves, deep bass sweeps, and Foley assets to design deep auditory immersion.',
-      bg: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=800&q=80'
+      bg: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?auto=format&fit=crop&w=900&q=80'
     },
     {
+      tag: 'Color & Look',
       title: 'Cinematic Grading',
       desc: 'Bringing the color space of digital films to social feeds, separating content from generic uploads.',
-      bg: 'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=800&q=80'
+      bg: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=80'
+    }
+  ];
+
+  const experience = [
+    {
+      title: 'AI Content Creator and Video Editor',
+      company: 'Galaxy.ai',
+      companyTag: '#1 All-in-One AI Platform',
+      type: 'Full-time',
+      dates: 'Aug 2025 — Present',
+      duration: '11 mos',
+      location: 'Dwarka, Delhi, India · Hybrid',
+      desc: 'Spearheaded the end-to-end creation of engaging video and written content designed to demystify generative AI for our users. Blended creative storytelling with deep technical knowledge of AI models to produce high-retention content.',
+      shortDesc: 'End-to-end creation of engaging video content that demystifies generative AI for users.',
+      skills: ['DaVinci Resolve', 'Video Editing', '+3 skills'],
+      current: true
+    },
+    {
+      title: 'Video Editor',
+      company: 'OneRoadmap',
+      companyTag: 'Freelance',
+      type: 'Freelance',
+      dates: 'Jun 2025 — Aug 2025',
+      duration: '3 mos',
+      location: 'Remote',
+      desc: 'Edited and delivered dynamic video content for clients, including sponsored reels featuring premier brands such as IIT Mandi, Unacademy, IIM, and Zell Education.',
+      shortDesc: 'Sponsored reels for premier brands including IIT Mandi, Unacademy, and IIM.',
+      skills: ['Video Editing', 'DaVinci', '+2 skills'],
+      current: false
+    },
+    {
+      title: 'UX Designer',
+      company: 'Vtex.AI',
+      companyTag: 'Internship',
+      type: 'Internship',
+      dates: 'Jun 2025',
+      duration: '1 mo',
+      location: 'Remote',
+      desc: 'Designed intuitive and user-friendly UI/UX solutions for internal and client-facing tools.',
+      shortDesc: 'Intuitive UI/UX solutions for internal and client-facing tools.',
+      skills: ['UI/UX Design'],
+      current: false
+    },
+    {
+      title: 'Lead User Experience Designer',
+      company: 'Reto INDIA',
+      companyTag: '3 mos total',
+      type: 'Part-time',
+      dates: 'May 2025',
+      duration: '1 mo',
+      location: 'Remote',
+      desc: 'Selected for personalized leadership development and mentorship by the CEO due to high-impact performance and potential. Previously User Experience Designer (Apprenticeship), Mar 2025 — May 2025.',
+      shortDesc: 'Selected for leadership mentorship by the CEO after a high-impact apprenticeship.',
+      skills: ['Product Design', 'UI/UX', '+15 skills'],
+      current: false
+    },
+    {
+      title: 'Freelance Designer · Graphics, UI/UX & Digital Products',
+      company: 'Freelance',
+      companyTag: 'Self-employed',
+      type: 'Freelance',
+      dates: 'Sep 2022 — Mar 2025',
+      duration: '2 yrs 7 mos',
+      location: 'Dwarka, Delhi, India · Remote',
+      desc: 'As a freelance graphic designer and emerging UX designer, combined creative visual communication with user-centered design thinking to build functional, meaningful, and visually engaging solutions.',
+      shortDesc: 'Visual communication and user-centered design for functional, engaging products.',
+      skills: ['Product Design', 'HTML', '+29 skills'],
+      current: false
     }
   ];
 
@@ -235,9 +339,158 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Experience Section */}
+        <div className="space-y-8">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase block">
+              Career Path
+            </span>
+            <h3 className="text-3xl font-black uppercase text-zinc-100 font-sans">Experience</h3>
+            <p className="text-xs text-zinc-500 font-light">From freelance design roots to AI-driven video production at scale.</p>
+          </div>
+
+          {/* Desktop: full stacked cards */}
+          <div className="hidden md:block max-w-3xl mx-auto space-y-4">
+            {experience.map((job, idx) => (
+              <div
+                key={idx}
+                className={`relative p-6 md:p-7 rounded-2xl bg-[#0c0c0e]/80 border transition-all duration-300 group ${
+                  job.current
+                    ? 'border-[#22d3ee]/40 shadow-[0_0_30px_rgba(34,211,238,0.08)]'
+                    : 'border-zinc-800/80 hover:border-zinc-700'
+                }`}
+              >
+                {job.current && (
+                  <span className="absolute -top-2.5 left-6 px-2.5 py-0.5 rounded-full bg-[#070709] border border-[#22d3ee]/50 text-[9px] font-bold text-[#22d3ee] uppercase tracking-widest">
+                    Current
+                  </span>
+                )}
+
+                <div className="flex items-start gap-4">
+                  {/* Logo badge */}
+                  <div className="shrink-0 w-11 h-11 rounded-xl bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-center text-[#22d3ee] font-black text-sm uppercase">
+                    {job.company.charAt(0)}
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-2">
+                    {/* Title row */}
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                      <h4 className="text-sm md:text-base font-bold text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300">
+                        {job.title}
+                      </h4>
+                      <span className="text-[11px] font-mono text-zinc-500 shrink-0">{job.dates}</span>
+                    </div>
+
+                    {/* Company row */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-zinc-400">
+                      <span className="font-semibold text-zinc-300">{job.company}</span>
+                      <span className="text-zinc-600">·</span>
+                      <span>{job.companyTag}</span>
+                      <span className="text-zinc-600">·</span>
+                      <span>{job.type}</span>
+                    </div>
+
+                    <p className="text-[11px] text-zinc-500 uppercase tracking-wide">{job.location} · {job.duration}</p>
+
+                    {/* Description */}
+                    <p className="text-xs md:text-[13px] text-zinc-400 font-light leading-relaxed pt-1">
+                      {job.desc}
+                    </p>
+
+                    {/* Skill chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {job.skills.map((skill, sIdx) => (
+                        <span
+                          key={sIdx}
+                          className="text-[9px] font-medium bg-zinc-950/80 border border-zinc-800/80 px-2 py-0.5 rounded text-zinc-500 font-mono tracking-tight group-hover:border-[#22d3ee]/20 group-hover:text-zinc-400 transition-colors"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile: fixed-size swipeable carousel, condensed content */}
+          <div className="md:hidden">
+            <div
+              onScroll={handleScrollExperience}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-4 scrollbar-none pb-2 -mx-6 px-6 w-auto"
+            >
+              {experience.map((job, idx) => (
+                <div
+                  key={idx}
+                  className={`snap-center shrink-0 w-[82%] h-[280px] p-5 rounded-2xl bg-[#0c0c0e]/90 border flex flex-col transition-all duration-500 ease-out relative overflow-hidden
+                    ${idx === activeIndexExperience
+                      ? 'scale-100 opacity-100 border-[#22d3ee]/40 shadow-[0_0_25px_rgba(34,211,238,0.12)] z-20'
+                      : 'scale-[0.94] opacity-50 border-zinc-800/80 z-10'
+                    }
+                  `}
+                >
+                  {job.current && (
+                    <span className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-[#070709] border border-[#22d3ee]/50 text-[8px] font-bold text-[#22d3ee] uppercase tracking-widest">
+                      Current
+                    </span>
+                  )}
+
+                  {/* Logo badge */}
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-center text-[#22d3ee] font-black text-sm uppercase mb-3">
+                    {job.company.charAt(0)}
+                  </div>
+
+                  {/* Title */}
+                  <h4 className="text-sm font-bold text-zinc-100 leading-snug h-9 overflow-hidden">
+                    {job.title}
+                  </h4>
+
+                  {/* Company row */}
+                  <p className="text-[11px] text-zinc-400 mt-1">
+                    <span className="font-semibold text-zinc-300">{job.company}</span> · {job.type}
+                  </p>
+                  <p className="text-[10px] font-mono text-zinc-500 mt-0.5">{job.dates}</p>
+
+                  {/* Condensed description */}
+                  <p className="text-[11px] text-zinc-400 font-light leading-relaxed mt-2.5 flex-1 overflow-hidden">
+                    {job.shortDesc}
+                  </p>
+
+                  {/* Single skill chip row, max 2 */}
+                  <div className="flex flex-wrap gap-1.5 pt-3 mt-auto">
+                    {job.skills.slice(0, 2).map((skill, sIdx) => (
+                      <span
+                        key={sIdx}
+                        className="text-[9px] font-medium bg-zinc-950/80 border border-zinc-800/80 px-2 py-0.5 rounded text-zinc-500 font-mono tracking-tight"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Dot indicators */}
+            <div className="flex justify-center gap-1.5 pt-4">
+              {experience.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === activeIndexExperience ? 'w-5 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Story Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
-          <div className="lg:col-span-5 flex flex-col justify-center space-y-6 border-l-2 border-[#22d3ee]/40 pl-6 md:pl-8 py-2">
+        <div className="space-y-12">
+
+          {/* Intro text block, centered above the philosophy stack */}
+          <div className="max-w-2xl mx-auto text-center space-y-5 border-t border-b border-zinc-800/60 py-8">
             <h3 className="text-2xl md:text-3xl font-black uppercase text-[#22d3ee] tracking-wide font-sans">
               MY PHILOSOPHY
             </h3>
@@ -248,26 +501,66 @@ export default function AboutPage() {
               By combining state-of-the-art post-production suites (DaVinci Resolve, AE) with generative AI platforms, I act as a force multiplier. This workflow allows for rapid asset creation, automated layout composition, and high-fidelity soundscapes that would take typical production houses weeks to execute.
             </p>
           </div>
-          
-          {/* Core Philosophy Cards (Mobile Swipeable, Desktop Grid) */}
-          <div 
+
+          {/* Desktop: connected alternating panel stack, tied together by one continuous trace line */}
+          <div className="hidden md:block relative max-w-5xl mx-auto">
+            {/* Continuous vertical trace line running through all four panels */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#22d3ee]/40 to-transparent -translate-x-1/2 z-0" />
+
+            <div className="space-y-3">
+              {philosophy.map((item, idx) => {
+                const reversed = idx % 2 === 1;
+                return (
+                  <div key={idx} className="relative grid grid-cols-2 gap-3 items-stretch group">
+                    {/* Node on the trace line */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#070709] border border-[#22d3ee]/60 z-20 group-hover:border-[#22d3ee] group-hover:shadow-[0_0_12px_rgba(34,211,238,0.5)] transition-all duration-300" />
+
+                    {/* Image panel */}
+                    <div className={`relative h-44 rounded-2xl overflow-hidden border border-zinc-800/80 group-hover:border-[#22d3ee]/30 transition-all duration-500 ${reversed ? 'order-2' : 'order-1'}`}>
+                      <img
+                        src={item.bg}
+                        alt={item.title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 filter grayscale contrast-110"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-r ${reversed ? 'from-transparent to-[#070709]/60' : 'from-[#070709]/60 to-transparent'}`} />
+                    </div>
+
+                    {/* Text panel */}
+                    <div className={`relative flex flex-col justify-center p-6 md:p-8 rounded-2xl border border-zinc-800/80 bg-[#0c0c0e]/80 group-hover:border-[#22d3ee]/30 group-hover:bg-[#121216]/60 transition-all duration-500 space-y-2 ${reversed ? 'order-1' : 'order-2'}`}>
+                      <span className="text-[10px] font-mono text-[#22d3ee]/70 font-bold tracking-widest uppercase">
+                        {item.tag}
+                      </span>
+                      <h4 className="text-lg md:text-xl font-black text-zinc-100 uppercase tracking-wide group-hover:text-[#22d3ee] transition-colors duration-300">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs md:text-[13px] text-zinc-400 font-light leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile: swipeable cards (unchanged behavior) */}
+          <div
             onScroll={handleScrollPhilosophy}
-            className="lg:col-span-7 flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 md:gap-6 md:pb-0 w-auto"
+            className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 w-auto"
           >
             {philosophy.map((item, idx) => (
-              <div 
+              <div
                 key={idx}
-                className={`snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-6 rounded-2xl bg-[#0c0c0e]/90 border shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group min-h-[160px] flex flex-col justify-between cursor-default transition-all duration-500 ease-out
+                className={`snap-center shrink-0 w-[85%] p-6 rounded-2xl bg-[#0c0c0e]/90 border shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group min-h-[160px] flex flex-col justify-between cursor-default transition-all duration-500 ease-out
                   ${idx === activeIndexPhilosophy
-                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_25px_rgba(34,211,238,0.15)] z-20'
-                    : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 pointer-events-none z-10'
+                    ? 'scale-100 opacity-100 border-[#22d3ee]/40 shadow-[0_0_25px_rgba(34,211,238,0.15)] z-20'
+                    : 'scale-[0.92] opacity-45 border-zinc-800/80 pointer-events-none z-10'
                   }
-                  md:scale-100 md:opacity-100 md:border-zinc-800/80 hover:border-[#22d3ee]/35 hover:shadow-[0_0_25px_rgba(34,211,238,0.1)]
                 `}
               >
                 {/* Dim background image */}
-                <img 
-                  src={item.bg} 
+                <img
+                  src={item.bg}
                   alt={item.title}
                   className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-45 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
                 />
@@ -275,9 +568,9 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/70 to-[#0c0c0e]/20 z-0 pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-mono text-[#22d3ee]/80 font-bold tracking-widest">0{idx + 1} /</span>
-                  </div>
+                  <span className="text-[10px] font-mono text-[#22d3ee]/80 font-bold tracking-widest uppercase">
+                    {item.tag}
+                  </span>
                   <div className="space-y-1.5">
                     <h4 className="text-base font-black text-zinc-100 uppercase tracking-wide group-hover:text-[#22d3ee] transition-colors duration-300">
                       {item.title}
@@ -288,6 +581,18 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Dot indicators */}
+          <div className="md:hidden flex justify-center gap-1.5 pt-2">
+            {philosophy.map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === activeIndexPhilosophy ? 'w-5 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700'
+                }`}
+              />
             ))}
           </div>
         </div>
@@ -309,7 +614,7 @@ export default function AboutPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
-                className={`flex-1 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                className={`flex-1 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
                   activeCategory === tab.id
                     ? 'bg-[#22d3ee]/10 border border-[#22d3ee]/30 text-[#22d3ee]'
                     : 'text-zinc-500 border border-transparent hover:text-zinc-300'
@@ -322,6 +627,7 @@ export default function AboutPage() {
 
           {/* Cards Grid (Mobile Swipeable, Desktop Grid) */}
           <div 
+            ref={toolkitScrollRef}
             onScroll={handleScrollToolkit}
             className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:pb-0 relative z-10"
           >
@@ -364,6 +670,18 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Dot indicators (mobile only) */}
+          <div className="md:hidden flex justify-center gap-1.5 pt-2">
+            {tools[activeCategory].map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === activeIndexToolkit ? 'w-5 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700'
+                }`}
+              />
             ))}
           </div>
         </div>

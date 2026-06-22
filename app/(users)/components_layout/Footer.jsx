@@ -111,8 +111,7 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-xs uppercase tracking-widest text-zinc-300 font-bold">Social Connection</h4>
             <ul className="space-y-2.5 text-xs text-zinc-400">
-              <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">LinkedIn ↗</a></li>
-              {/* <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">X (Twitter) ↗</a></li>
+<li><a href={CONFIG.socials.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">LinkedIn ↗</a></li>              {/* <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">X (Twitter) ↗</a></li>
               <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">YouTube ↗</a></li>
               <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">Instagram ↗</a></li>
               <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">TikTok ↗</a></li> */}

@@ -8,7 +8,7 @@ export default function ServicesPage() {
   const [longForm, setLongForm] = useState(1);
   const [addThumbnails, setAddThumbnails] = useState(false);
   const [addStrategy, setAddStrategy] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = (e) => {
     const container = e.currentTarget;
@@ -131,68 +131,114 @@ export default function ServicesPage() {
         </div>
 
         {/* Core Services Grid (Mobile Swipeable, Desktop Grid) */}
-        <div 
-          onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:pb-0 relative z-10"
-        >
-          {services.map((s, idx) => (
-            <div
-              key={idx}
-              onClick={() => handleServiceWhatsAppRedirect(s.title)}
-              className={`snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-8 rounded-3xl bg-[#0c0c0e]/95 border shadow-lg relative overflow-hidden min-h-[220px] cursor-pointer transition-all duration-500 ease-out
-                ${idx === activeIndex
-                  ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_30px_rgba(34,211,238,0.15)] z-20'
-                  : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 pointer-events-none z-10'
-                }
-                md:scale-100 md:opacity-100 md:border-zinc-800/80 hover:border-[#22d3ee]/20 hover:bg-[#121216]/95
-              `}
-            >
-              {/* Dim background image */}
-              <img 
-                src={s.bg} 
-                alt={s.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-65 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
-              />
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/60 to-[#0c0c0e]/15 z-0 pointer-events-none" />
+        <div>
+          <div 
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:pb-0 relative z-10 md:items-stretch"
+          >
+            {services.map((s, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleServiceWhatsAppRedirect(s.title)}
+                className={`group snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-8 md:p-0 rounded-3xl bg-[#0c0c0e]/95 md:bg-[#0c0c0e] border shadow-lg relative overflow-hidden cursor-pointer transition-all duration-500 ease-out md:flex md:flex-col
+                  ${idx === activeIndex
+                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_30px_rgba(34,211,238,0.15)] z-20'
+                    : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 z-10'
+                  }
+                  md:scale-100 md:opacity-100 md:border-zinc-800/70 md:hover:border-[#22d3ee]/40 md:hover:-translate-y-1.5 md:hover:shadow-[0_25px_60px_-15px_rgba(34,211,238,0.25)]
+                `}
+              >
+                {/* Mobile-only full-bleed background image */}
+                <img 
+                  src={s.bg} 
+                  alt={s.title}
+                  className="md:hidden absolute inset-0 w-full h-full object-cover opacity-45 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
+                />
+                <div className="md:hidden absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/60 to-[#0c0c0e]/15 z-0 pointer-events-none" />
 
-              <div className="space-y-4 relative z-10">
-                <h4 className="text-xl font-bold text-zinc-100 group-hover:text-[#22d3ee] transition-colors uppercase tracking-wide font-sans">
-                  {s.title}
-                </h4>
-                <p className="text-sm text-zinc-400 font-light leading-relaxed">
-                  {s.desc}
-                </p>
-              </div>
+                {/* Desktop-only media strip — vivid color up top, fades to grayscale near the bottom */}
+                <div className="hidden md:block relative h-40 overflow-hidden shrink-0">
+                  {/* Base layer: full color, always visible */}
+                  <img 
+                    src={s.bg} 
+                    alt={s.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
+                  />
+                  {/* Grayscale layer: masked to fade in only toward the bottom */}
+                  <img
+                    src={s.bg}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:scale-110 transition-all duration-700 [mask-image:linear-gradient(to_bottom,transparent_0%,transparent_40%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,transparent_40%,black_100%)]"
+                  />
+                  {/* Bottom fade into the card body */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/50 to-transparent" />
+                  {/* Subtle top vignette for badge legibility — kept light so color still pops */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent" />
+                  <span className="absolute top-4 right-4 text-[10px] font-mono font-bold text-zinc-300 bg-black/50 backdrop-blur-sm border border-white/10 rounded-full w-7 h-7 flex items-center justify-center">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                </div>
 
-              {/* Deliverable Tags */}
-              <div className="mt-8 border-t border-zinc-900 pt-6 relative z-10">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-[#22d3ee]/70">Key Deliverables</span>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {s.deliverables.map((item, id) => (
-                    <span key={id} className="text-[10px] bg-zinc-950/80 border border-zinc-850 px-3 py-1 rounded-full text-zinc-400 font-medium">
-                      {item}
+                {/* Content */}
+                <div className="relative z-10 space-y-4 md:flex-1 md:px-8 md:pt-7">
+                  <h4 className="text-xl md:text-lg font-bold text-zinc-100 group-hover:text-[#22d3ee] transition-colors uppercase tracking-wide font-sans leading-snug">
+                    {s.title}
+                  </h4>
+                  <p className="hidden md:block text-[13px] text-zinc-400 font-light leading-relaxed">
+                    {s.desc}
+                  </p>
+                </div>
+
+                {/* Deliverable Tags */}
+                <div className="mt-8 md:mt-0 border-t border-zinc-900 md:border-zinc-900/80 pt-6 md:px-8 md:pb-7 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#22d3ee]/70">Key Deliverables</span>
+                    <span className="hidden md:inline-block text-[#22d3ee] text-sm opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                      →
                     </span>
-                  ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {s.deliverables.map((item, id) => (
+                      <span 
+                        key={id} 
+                        className="text-[10px] bg-zinc-950/80 border border-zinc-850 md:border-zinc-800/80 px-3 py-1 rounded-full text-zinc-400 font-medium md:group-hover:border-[#22d3ee]/20 md:group-hover:text-zinc-300 transition-colors"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Dot indicators (mobile only) */}
+          <div className="md:hidden flex justify-center gap-1.5 pt-2">
+            {services.map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === activeIndex ? 'w-5 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Authentic Interactive Package Planner */}
-        <div className="p-8 md:p-12 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 relative overflow-hidden shadow-2xl">
+        <div className="p-6 sm:p-8 md:p-12 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 relative overflow-hidden shadow-2xl">
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#22d3ee]/[0.015] rounded-full blur-3xl pointer-events-none" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             {/* Interactive Inputs */}
-            <div className="lg:col-span-7 space-y-8">
+            <div className="lg:col-span-7 space-y-6 md:space-y-8">
               <div className="space-y-2">
                 <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase">
                   Interactive Planner
                 </span>
-                <h3 className="text-3xl font-black uppercase text-zinc-100 tracking-wide font-sans">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase text-zinc-100 tracking-wide font-sans leading-tight">
                   BUILD YOUR ENGAGEMENT PACKAGE
                 </h3>
                 <p className="text-zinc-400 font-light text-xs md:text-sm leading-relaxed">
@@ -200,17 +246,17 @@ export default function ServicesPage() {
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5 md:space-y-6">
                 {/* Short-Form Slider */}
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-zinc-400">
+                  <div className="flex flex-wrap justify-between items-baseline gap-x-3 gap-y-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-400">
                     <span>Short-Form Reels / Shorts</span>
-                    <span className="text-[#22d3ee] font-mono text-sm">{reels} Videos / Month</span>
+                    <span className="text-[#22d3ee] font-mono text-xs sm:text-sm whitespace-nowrap">{reels} Videos / Month</span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <button
                       onClick={() => setReels(Math.max(0, reels - 1))}
-                      className="w-10 h-10 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
+                      className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
                     >
                       -
                     </button>
@@ -224,7 +270,7 @@ export default function ServicesPage() {
                     />
                     <button
                       onClick={() => setReels(Math.min(20, reels + 1))}
-                      className="w-10 h-10 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
+                      className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
                     >
                       +
                     </button>
@@ -233,14 +279,14 @@ export default function ServicesPage() {
 
                 {/* Long-Form Slider */}
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-zinc-400">
+                  <div className="flex flex-wrap justify-between items-baseline gap-x-3 gap-y-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-400">
                     <span>Long-Form YouTube Videos</span>
-                    <span className="text-[#22d3ee] font-mono text-sm">{longForm} Videos / Month</span>
+                    <span className="text-[#22d3ee] font-mono text-xs sm:text-sm whitespace-nowrap">{longForm} Videos / Month</span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <button
                       onClick={() => setLongForm(Math.max(0, longForm - 1))}
-                      className="w-10 h-10 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
+                      className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
                     >
                       -
                     </button>
@@ -254,7 +300,7 @@ export default function ServicesPage() {
                     />
                     <button
                       onClick={() => setLongForm(Math.min(10, longForm + 1))}
-                      className="w-10 h-10 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
+                      className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full border border-zinc-800 bg-[#0c0c0e] hover:border-zinc-600 active:scale-95 text-zinc-300 font-bold transition-all"
                     >
                       +
                     </button>
@@ -292,25 +338,25 @@ export default function ServicesPage() {
 
             {/* Calculated Receipt Box */}
             <div className="lg:col-span-5 space-y-6 lg:border-l lg:border-zinc-900 lg:pl-10">
-              <div className="p-6 rounded-2xl bg-[#060608] border border-zinc-900 space-y-6">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#060608] border border-zinc-900 space-y-5 sm:space-y-6">
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Package Summary</span>
                 
                 <div className="space-y-3">
-                  <div className="flex justify-between text-xs text-zinc-400">
+                  <div className="flex justify-between items-baseline gap-3 text-[11px] sm:text-xs text-zinc-400">
                     <span>Short-Form Reels</span>
-                    <span className="font-mono text-[#22d3ee]">{reels} Videos / Mo</span>
+                    <span className="font-mono text-[#22d3ee] text-right shrink-0 whitespace-nowrap">{reels} Videos / Mo</span>
                   </div>
-                  <div className="flex justify-between text-xs text-zinc-400">
+                  <div className="flex justify-between items-baseline gap-3 text-[11px] sm:text-xs text-zinc-400">
                     <span>Long-Form YouTube</span>
-                    <span className="font-mono text-[#22d3ee]">{longForm} Videos / Mo</span>
+                    <span className="font-mono text-[#22d3ee] text-right shrink-0 whitespace-nowrap">{longForm} Videos / Mo</span>
                   </div>
-                  <div className="flex justify-between text-xs text-zinc-400">
+                  <div className="flex justify-between items-baseline gap-3 text-[11px] sm:text-xs text-zinc-400">
                     <span>Thumbnails</span>
-                    <span className="font-mono text-[#22d3ee]">{addThumbnails ? 'Included' : 'None'}</span>
+                    <span className="font-mono text-[#22d3ee] text-right shrink-0 whitespace-nowrap">{addThumbnails ? 'Included' : 'None'}</span>
                   </div>
-                  <div className="flex justify-between text-xs text-zinc-400">
+                  <div className="flex justify-between items-baseline gap-3 text-[11px] sm:text-xs text-zinc-400">
                     <span>Strategy Consultation</span>
-                    <span className="font-mono text-[#22d3ee]">{addStrategy ? 'Included' : 'None'}</span>
+                    <span className="font-mono text-[#22d3ee] text-right shrink-0 whitespace-nowrap">{addStrategy ? 'Included' : 'None'}</span>
                   </div>
                 </div>
 

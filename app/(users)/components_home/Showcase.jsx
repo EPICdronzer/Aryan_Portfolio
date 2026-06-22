@@ -1,6 +1,13 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { CONFIG } from '@/config'; // adjust import path to wherever CONFIG actually lives
+
+// Helper: build a WhatsApp click-to-chat link with a prefilled, service-specific message
+function getWhatsAppLink(serviceName) {
+  const message = `Hi, I'd like to know more about your ${serviceName} service`;
+  return `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(message)}`;
+}
 
 // Helper: extract YouTube video ID from any YouTube URL (watch or shorts)
 function getYTId(url) {
@@ -374,6 +381,85 @@ const skills = [
   }
 ];
 
+// Service data centralized with the bg image for each card (used for both desktop side-rail and mobile card backgrounds)
+const servicesData = [
+  {
+    index: '01',
+    name: 'AI Video Editing',
+    desc: 'High-retention video post-production blending DaVinci Resolve with generative AI visual models for scroll-stopping shorts and reels.',
+    image: '/services_1.png',
+  },
+  {
+    index: '02',
+    name: 'Content Strategy',
+    desc: 'Engineering competitor benchmarks, timing scripts, and viral hook framework structure to secure audience retention.',
+    image: '/services_2.png',
+  },
+  {
+    index: '03',
+    name: 'Prompt Engineering',
+    desc: 'Crafting custom text-to-video prompts, fine-tuning visual aesthetics, and securing early access to bleeding-edge video models.',
+    image: '/services_3.png',
+  },
+  {
+    index: '04',
+    name: 'AI Visual Assets',
+    desc: 'Creating generative b-roll renders, chromakey blends, and unique visual layers to replace traditional expensive studio shoots.',
+    image: '/services_4.png',
+  },
+];
+
+// Shared service card — used in both desktop grid and mobile carousel.
+// Clicking the card opens WhatsApp with a prefilled, service-specific message.
+// `withBg` controls whether the card shows its own image as a background (mobile only).
+function ServiceCard({ service, withBg }) {
+  return (
+    <a
+      href={getWhatsAppLink(service.name)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative p-8 rounded-3xl border border-zinc-800/80 hover:border-[#22d3ee]/40 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl overflow-hidden block"
+    >
+      {/* Background image layer (mobile bg mode) */}
+      {withBg && (
+        <>
+          <div
+            className="absolute inset-0 bg-cover bg-center filter grayscale contrast-115 brightness-[0.35] group-hover:brightness-[0.45] transition-all duration-500"
+            style={{ backgroundImage: `url(${service.image})` }}
+          />
+          {/* Dark scrim so text stays readable over the image */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/75 to-black/85" />
+        </>
+      )}
+
+      {/* Fallback flat background for desktop (no image) */}
+      {!withBg && (
+        <div className="absolute inset-0 bg-[#0c0c0e]/80 group-hover:bg-[#121216]/50 transition-all duration-300" />
+      )}
+
+      <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.04] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.08] transition-all duration-500 z-10" />
+
+      <div className="flex justify-between items-start w-full relative z-10">
+        <span className="text-[11px] font-bold text-zinc-400 tracking-wider">[{service.index}]</span>
+        <span className="text-zinc-400 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+          </svg>
+        </span>
+      </div>
+
+      <div className="space-y-2 mt-12 relative z-10">
+        <h4 className="text-xl font-bold tracking-wide text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
+          {service.name}
+        </h4>
+        <p className="text-zinc-300 text-xs font-light leading-relaxed">
+          {service.desc}
+        </p>
+      </div>
+    </a>
+  );
+}
+
 export default function Showcase() {
   const [skillsTab, setSkillsTab] = useState('tools');
 
@@ -446,49 +532,8 @@ export default function Showcase() {
 
               {/* Center Services Cards 01 & 02 */}
               <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                
-                {/* Service 01: AI Video Editing */}
-                <div className="p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                  <div className="flex justify-between items-start w-full relative z-10">
-                    <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[01]</span>
-                    <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="space-y-2 mt-12 relative z-10">
-                    <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                      AI Video Editing
-                    </h4>
-                    <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                      High-retention video post-production blending DaVinci Resolve with generative AI visual models for scroll-stopping shorts and reels.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Service 02: Content Strategy */}
-                <div className="p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                  <div className="flex justify-between items-start w-full relative z-10">
-                    <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[02]</span>
-                    <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="space-y-2 mt-12 relative z-10">
-                    <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                      Content Strategy
-                    </h4>
-                    <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                      Engineering competitor benchmarks, timing scripts, and viral hook framework structure to secure audience retention.
-                    </p>
-                  </div>
-                </div>
-
+                <ServiceCard service={servicesData[0]} withBg={false} />
+                <ServiceCard service={servicesData[1]} withBg={false} />
               </div>
 
               {/* Right Column Image 2 */}
@@ -512,49 +557,8 @@ export default function Showcase() {
 
               {/* Center Services Cards 03 & 04 */}
               <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                
-                {/* Service 03: Prompt Engineering */}
-                <div className="p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                  <div className="flex justify-between items-start w-full relative z-10">
-                    <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[03]</span>
-                    <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="space-y-2 mt-12 relative z-10">
-                    <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                      Prompt Engineering
-                    </h4>
-                    <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                      Crafting custom text-to-video prompts, fine-tuning visual aesthetics, and securing early access to bleeding-edge video models.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Service 04: AI Visual Assets */}
-                <div className="p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                  <div className="flex justify-between items-start w-full relative z-10">
-                    <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[04]</span>
-                    <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="space-y-2 mt-12 relative z-10">
-                    <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                      AI Visual Assets
-                    </h4>
-                    <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                      Creating generative b-roll renders, chromakey blends, and unique visual layers to replace traditional expensive studio shoots.
-                    </p>
-                  </div>
-                </div>
-
+                <ServiceCard service={servicesData[2]} withBg={false} />
+                <ServiceCard service={servicesData[3]} withBg={false} />
               </div>
 
               {/* Right Column Image 4 */}
@@ -566,97 +570,39 @@ export default function Showcase() {
 
             </div>
 
+            {/* View All button — desktop, below the cards */}
+            <div className="flex justify-center pt-4">
+              <a
+                href="/services"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-zinc-700 text-zinc-200 text-xs font-bold uppercase tracking-widest hover:border-[#22d3ee] hover:text-[#22d3ee] hover:bg-[#22d3ee]/5 transition-all duration-300"
+              >
+                View All Services
+                
+              </a>
+            </div>
+
           </div>
 
           {/* Mobile/Tablet View Carousel (visible only on screens smaller than lg) */}
-          <div className="lg:hidden w-full">
+          <div className="lg:hidden w-full space-y-6">
             <Carousel>
-              
-              {/* Service 01: AI Video Editing */}
-              <div className="w-full sm:w-[calc(50%-8px)] shrink-0 snap-start p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                <div className="flex justify-between items-start w-full relative z-10">
-                  <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[01]</span>
-                  <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </span>
+              {servicesData.map((service) => (
+                <div key={service.index} className="w-full sm:w-[calc(50%-8px)] shrink-0 snap-start">
+                  <ServiceCard service={service} withBg={true} />
                 </div>
-                <div className="space-y-2 mt-12 relative z-10">
-                  <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                    AI Video Editing
-                  </h4>
-                  <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                    High-retention video post-production blending DaVinci Resolve with generative AI visual models for scroll-stopping shorts and reels.
-                  </p>
-                </div>
-              </div>
-
-              {/* Service 02: Content Strategy */}
-              <div className="w-full sm:w-[calc(50%-8px)] shrink-0 snap-start p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                <div className="flex justify-between items-start w-full relative z-10">
-                  <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[02]</span>
-                  <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </span>
-                </div>
-                <div className="space-y-2 mt-12 relative z-10">
-                  <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                    Content Strategy
-                  </h4>
-                  <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                    Engineering competitor benchmarks, timing scripts, and viral hook framework structure to secure audience retention.
-                  </p>
-                </div>
-              </div>
-
-              {/* Service 03: Prompt Engineering */}
-              <div className="w-full sm:w-[calc(50%-8px)] shrink-0 snap-start p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                <div className="flex justify-between items-start w-full relative z-10">
-                  <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[03]</span>
-                  <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </span>
-                </div>
-                <div className="space-y-2 mt-12 relative z-10">
-                  <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                    Prompt Engineering
-                  </h4>
-                  <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                    Crafting custom text-to-video prompts, fine-tuning visual aesthetics, and securing early access to bleeding-edge video models.
-                  </p>
-                </div>
-              </div>
-
-              {/* Service 04: AI Visual Assets */}
-              <div className="w-full sm:w-[calc(50%-8px)] shrink-0 snap-start p-8 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/40 hover:bg-[#121216]/50 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl relative overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/[0.05] transition-all duration-500" />
-                <div className="flex justify-between items-start w-full relative z-10">
-                  <span className="text-[11px] font-bold text-zinc-500 tracking-wider">[04]</span>
-                  <span className="text-zinc-600 group-hover:text-[#22d3ee] transition-colors duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </span>
-                </div>
-                <div className="space-y-2 mt-12 relative z-10">
-                  <h4 className="text-xl font-bold tracking-wide text-zinc-200 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
-                    AI Visual Assets
-                  </h4>
-                  <p className="text-zinc-400 text-xs font-light leading-relaxed">
-                    Creating generative b-roll renders, chromakey blends, and unique visual layers to replace traditional expensive studio shoots.
-                  </p>
-                </div>
-              </div>
-
+              ))}
             </Carousel>
+
+            {/* View All button — mobile, below the carousel arrows */}
+            <div className="flex justify-center">
+              <a
+                href="/services"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-zinc-700 text-zinc-200 text-xs font-bold uppercase tracking-widest hover:border-[#22d3ee] hover:text-[#22d3ee] hover:bg-[#22d3ee]/5 transition-all duration-300"
+              >
+                View All Services
+                
+              </a>
+            </div>
           </div>
         </div>
 
@@ -792,4 +738,3 @@ export default function Showcase() {
     </section>
   );
 }
-
