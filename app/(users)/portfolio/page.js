@@ -359,7 +359,7 @@ export default function PortfolioPage() {
         )}
 
         {/* Behind the Scenes Simulator */}
-        <div className="p-8 md:p-12 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 space-y-10 relative overflow-hidden shadow-2xl">
+        <div className="p-8 md:p-12 rounded-xl bg-[#0c0c0e]/80 border border-zinc-800/80 space-y-10 relative overflow-hidden shadow-2xl">
           <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-[#22d3ee]/[0.02] rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -383,7 +383,7 @@ export default function PortfolioPage() {
                   <button
                     key={s.id}
                     onClick={() => setEditStage(s.id)}
-                    className={`text-left px-5 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                    className={`text-left px-5 py-3 rounded-md border text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
                       editStage === s.id
                         ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-[#22d3ee]'
                         : 'border-zinc-800/60 bg-zinc-950/20 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
@@ -397,7 +397,7 @@ export default function PortfolioPage() {
 
             <div className="space-y-4">
               {/* Stage Image Preview */}
-              <div className="relative rounded-2xl overflow-hidden border border-zinc-800/60 shadow-[0_16px_48px_rgba(0,0,0,0.8)] bg-zinc-950/60 aspect-video">
+              <div className="relative rounded-xl overflow-hidden border border-zinc-800/60 shadow-[0_16px_48px_rgba(0,0,0,0.8)] bg-zinc-950/60 aspect-video">
                 <img
                   key={editStage}
                   src={
@@ -425,7 +425,7 @@ export default function PortfolioPage() {
                 </div>
               </div>
 
-              <div className={`p-6 rounded-2xl border-2 transition-all duration-500 ${btsStages[editStage].color}`}>
+              <div className={`p-6 rounded-xl border-2 transition-all duration-500 ${btsStages[editStage].color}`}>
                 <div className="space-y-3">
                   <h4 className="text-base font-black uppercase tracking-wide">{btsStages[editStage].title}</h4>
                   <p className="text-xs font-light leading-relaxed">{btsStages[editStage].action}</p>

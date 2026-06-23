@@ -227,7 +227,7 @@ export default function ServicesPage() {
         </div>
 
         {/* Authentic Interactive Package Planner */}
-        <div className="p-6 sm:p-8 md:p-12 rounded-3xl bg-[#0c0c0e]/80 border border-zinc-800/80 relative overflow-hidden shadow-2xl">
+        <div className="p-6 sm:p-8 md:p-12 rounded-xl bg-[#0c0c0e]/80 border border-zinc-800/80 relative overflow-hidden shadow-2xl">
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#22d3ee]/[0.015] rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
@@ -323,7 +323,7 @@ export default function ServicesPage() {
 
                   <button
                     onClick={() => setAddStrategy(!addStrategy)}
-                    className={`px-5 py-4 rounded-xl border-2 text-left transition-all duration-300 flex flex-col justify-between ${
+                    className={`px-5 py-4 rounded-md border-2 text-left transition-all duration-300 flex flex-col justify-between ${
                       addStrategy 
                         ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-white' 
                         : 'border-zinc-800/80 bg-zinc-950/20 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
@@ -338,7 +338,7 @@ export default function ServicesPage() {
 
             {/* Calculated Receipt Box */}
             <div className="lg:col-span-5 space-y-6 lg:border-l lg:border-zinc-900 lg:pl-10">
-              <div className="p-5 sm:p-6 rounded-2xl bg-[#060608] border border-zinc-900 space-y-5 sm:space-y-6">
+              <div className="p-5 sm:p-6 rounded-xl bg-[#060608] border border-zinc-900 space-y-5 sm:space-y-6">
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Package Summary</span>
                 
                 <div className="space-y-3">
@@ -364,7 +364,7 @@ export default function ServicesPage() {
 
                 <button
                   onClick={handleWhatsAppRedirect}
-                  className="w-full py-4 rounded-xl text-center bg-[#22d3ee] hover:bg-[#06b6d4] active:scale-95 transition-all text-white font-bold uppercase tracking-wider text-xs shadow-[0_4px_20px_rgba(34,211,238,0.25)] flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-md text-center bg-[#22d3ee] hover:bg-[#06b6d4] active:scale-95 transition-all text-white font-bold uppercase tracking-wider text-xs shadow-[0_4px_20px_rgba(34,211,238,0.25)] flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.237 3.483 8.42-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.788-1.485l-6.208 1.625zm7.422-5.759c1.562.928 3.109 1.486 4.703 1.487 5.479 0 9.935-4.456 9.938-9.937.001-2.656-1.03-5.153-2.906-7.03s-4.375-2.906-7.033-2.907c-5.48 0-9.937 4.457-9.94 9.939-.001 1.705.462 3.375 1.34 4.857l-.993 3.626 3.73-.978.161.093zm8.339-5.185c-.303-.151-1.793-.884-2.071-.985-.278-.101-.482-.151-.684.151-.202.303-.783.985-.961 1.187-.177.202-.354.227-.658.076-.303-.151-1.28-.472-2.438-1.505-.901-.804-1.51-1.798-1.687-2.101-.177-.302-.019-.466.132-.616.136-.135.303-.354.455-.53.152-.177.202-.303.303-.505.101-.202.051-.379-.025-.53-.076-.151-.684-1.647-.937-2.253-.247-.599-.499-.518-.684-.528-.177-.008-.379-.01-.582-.01-.202 0-.531.076-.809.379-.278.303-1.062 1.037-1.062 2.529 0 1.492 1.087 2.934 1.239 3.136.152.202 2.139 3.267 5.182 4.578.724.312 1.29.499 1.731.639.728.231 1.39.198 1.913.12.583-.087 1.793-.733 2.046-1.44.253-.707.253-1.314.177-1.44-.076-.126-.278-.202-.582-.353z" />

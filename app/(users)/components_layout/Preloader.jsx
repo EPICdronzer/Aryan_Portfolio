@@ -42,7 +42,7 @@ export default function Preloader() {
       <div className="relative flex flex-col items-center space-y-6 z-10 text-center select-none">
         
         {/* Glowing AR Brand Logo */}
-        <div className="relative flex items-center justify-center w-24 h-24 rounded-full border border-cyan-500/20 bg-zinc-950/60 shadow-[0_0_30px_rgba(34,211,238,0.15)] animate-pulse p-4">
+        <div className="relative flex items-center justify-center w-24 h-24 rounded-full border border-cyan-500/20 bg-black shadow-[0_0_30px_rgba(34,211,238,0.15)] animate-pulse p-4">
           <img src="/favicon.png" alt="AR Logo" className="w-12 h-12 object-contain" />
         </div>
 

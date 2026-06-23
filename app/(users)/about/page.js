@@ -340,8 +340,99 @@ export default function AboutPage() {
         </div>
 
         {/* Experience Section */}
-        <div className="space-y-8">
-          <div className="text-center max-w-xl mx-auto space-y-2">
+        <div className="relative space-y-8">
+
+          {/* Floating decorative objects — desktop only, sit in the empty gutters beside the experience cards */}
+          <div className="hidden lg:block absolute top-[6%] left-[1%] animate-float-all-1 z-0 pointer-events-none">
+            <svg
+              width="90"
+              height="90"
+              viewBox="0 0 200 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="opacity-35 filter grayscale drop-shadow-[0_8px_16px_rgba(255,255,255,0.05)]"
+            >
+              <defs>
+                <radialGradient id="expTorusGrad" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="50%" stopColor="#a1a1aa" />
+                  <stop offset="100%" stopColor="#27272a" />
+                </radialGradient>
+              </defs>
+              <path
+                d="M 100 30 C 138.66 30, 170 61.34, 170 100 C 170 138.66, 138.66 170, 100 170 C 61.34 170, 30 138.66, 30 100 C 30 61.34, 61.34 30, 100 30 Z M 100 65 C 119.33 65, 135 80.67, 135 100 C 135 119.33, 119.33 135, 100 135 C 80.67 135, 65 119.33, 65 100 C 65 80.67, 80.67 65, 100 65 Z"
+                fill="url(#expTorusGrad)"
+              />
+            </svg>
+          </div>
+
+          <div className="hidden lg:block absolute top-[45%] right-[2%] animate-float-all-2 z-0 pointer-events-none">
+            <svg
+              width="70"
+              height="70"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="opacity-30 filter grayscale drop-shadow-[0_8px_16px_rgba(255,255,255,0.05)]"
+            >
+              <defs>
+                <radialGradient id="expSphereGrad" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="50%" stopColor="#71717a" />
+                  <stop offset="100%" stopColor="#18181b" />
+                </radialGradient>
+              </defs>
+              <circle cx="50" cy="50" r="40" fill="url(#expSphereGrad)" />
+            </svg>
+          </div>
+
+          <div className="hidden lg:block absolute bottom-[4%] left-[3%] animate-float-all-2 z-0 pointer-events-none">
+            <svg
+              width="80"
+              height="80"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="opacity-35 filter grayscale drop-shadow-[0_8px_16px_rgba(255,255,255,0.05)]"
+            >
+              <defs>
+                <linearGradient id="expConeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="60%" stopColor="#52525b" />
+                  <stop offset="100%" stopColor="#09090b" />
+                </linearGradient>
+              </defs>
+              <path d="M50 15 L85 80 L15 80 Z" fill="url(#expConeGrad)" />
+            </svg>
+          </div>
+
+          <div className="hidden xl:block absolute top-[75%] right-[1%] animate-float-all-1 z-0 pointer-events-none">
+            <svg
+              width="60"
+              height="60"
+              viewBox="0 0 200 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="opacity-30 filter grayscale drop-shadow-[0_8px_16px_rgba(255,255,255,0.05)]"
+            >
+              <defs>
+                <linearGradient id="expSpiralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="50%" stopColor="#71717a" />
+                  <stop offset="100%" stopColor="#18181b" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M50,100 C30,70 60,30 100,30 C140,30 170,70 150,100 C130,130 160,170 100,170 C40,170 70,130 50,100 Z"
+                fill="none"
+                stroke="url(#expSpiralGrad)"
+                strokeWidth="28"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+
+          <div className="text-center max-w-xl mx-auto space-y-2 relative z-10">
             <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase block">
               Career Path
             </span>
@@ -350,7 +441,7 @@ export default function AboutPage() {
           </div>
 
           {/* Desktop: full stacked cards */}
-          <div className="hidden md:block max-w-3xl mx-auto space-y-4">
+          <div className="hidden md:block max-w-3xl mx-auto space-y-4 relative z-10">
             {experience.map((job, idx) => (
               <div
                 key={idx}
@@ -415,7 +506,7 @@ export default function AboutPage() {
           </div>
 
           {/* Mobile: fixed-size swipeable carousel, condensed content */}
-          <div className="md:hidden">
+          <div className="md:hidden relative z-10">
             <div
               onScroll={handleScrollExperience}
               className="flex overflow-x-auto snap-x snap-mandatory gap-4 scrollbar-none pb-2 -mx-6 px-6 w-auto"

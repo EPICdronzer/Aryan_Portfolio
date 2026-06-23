@@ -361,7 +361,7 @@ function RetentionCurve() {
         </p>
       </div>
 
-      <div className="relative rounded-3xl border border-zinc-800/80 bg-[#0c0c0e]/60 p-6 md:p-10 overflow-hidden">
+      <div className="relative rounded-xl border border-zinc-800/80 bg-[#0c0c0e]/60 p-6 md:p-10 overflow-hidden">
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-cyan-500/[0.05] rounded-full blur-[60px] pointer-events-none" />
 
         {/* Live readout row */}
@@ -498,7 +498,7 @@ function RetentionCurve() {
         </div>
 
         {/* Callout card for the active beat */}
-        <div className="relative z-10 mt-8 rounded-2xl border border-zinc-800/60 bg-zinc-950/60 p-5 md:p-6">
+        <div className="relative z-10 mt-8 rounded-xl border border-zinc-800/60 bg-zinc-950/60 p-5 md:p-6">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
             <span className="text-[10px] font-mono text-zinc-500">{formatTime(active.time)}</span>
             <span className="text-[10px] font-black text-[#22d3ee] uppercase tracking-widest">{active.tag}</span>
@@ -702,7 +702,7 @@ function ServiceCard({ service, withBg }) {
       href={getWhatsAppLink(service.name)}
       target="_blank"
       rel="noopener noreferrer"
-      className="relative p-8 rounded-3xl border border-zinc-800/80 hover:border-[#22d3ee]/40 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl overflow-hidden block"
+      className="relative p-8 rounded-xl border border-zinc-800/80 hover:border-[#22d3ee]/40 transition-all duration-300 flex flex-col justify-between min-h-[240px] group cursor-pointer shadow-xl overflow-hidden block"
     >
       {/* Background image layer (mobile bg mode) */}
       {withBg && (
@@ -848,7 +848,7 @@ export default function Showcase() {
               
               {/* Left Column Image 1 */}
               <div className="hidden lg:block lg:col-span-2 select-none pointer-events-none">
-                <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
+                <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
                   <img src="/services_1.png" alt="AI video post-production workspace" className="w-full h-full object-cover filter grayscale contrast-115 brightness-95" />
                 </div>
               </div>
@@ -861,7 +861,7 @@ export default function Showcase() {
 
               {/* Right Column Image 2 */}
               <div className="hidden lg:block lg:col-span-2 select-none pointer-events-none">
-                <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
+                <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
                   <img src="/services_2.png" alt="Futuristic content analytics chart" className="w-full h-full object-cover filter grayscale contrast-115 brightness-95" />
                 </div>
               </div>
@@ -873,7 +873,7 @@ export default function Showcase() {
               
               {/* Left Column Image 3 */}
               <div className="hidden lg:block lg:col-span-2 select-none pointer-events-none">
-                <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
+                <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
                   <img src="/services_3.png" alt="Cinematic professional camera rig" className="w-full h-full object-cover filter grayscale contrast-115 brightness-95" />
                 </div>
               </div>
@@ -886,7 +886,7 @@ export default function Showcase() {
 
               {/* Right Column Image 4 */}
               <div className="hidden lg:block lg:col-span-2 select-none pointer-events-none">
-                <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
+                <div className="aspect-[4/3] w-full rounded-xl overflow-hidden border border-zinc-800/50 bg-zinc-950/40 shadow-lg">
                   <img src="/services_4.png" alt="Futuristic code streams and digital art" className="w-full h-full object-cover filter grayscale contrast-115 brightness-95" />
                 </div>
               </div>

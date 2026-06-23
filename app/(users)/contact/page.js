@@ -95,7 +95,7 @@ export default function ContactPage() {
           <div className="lg:col-span-3 flex overflow-x-auto snap-x snap-mandatory gap-4 scrollbar-none pb-6 -mx-6 px-6 lg:flex lg:flex-col lg:mx-0 lg:px-0 lg:pb-0 lg:gap-5 w-auto">
             
             {/* Card 1: Location */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-2xl bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
+            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
               
               {/* Grayscale Dim Background Image */}
               <img 
@@ -125,7 +125,7 @@ export default function ContactPage() {
             </div>
 
             {/* Card 2: Contact Channels */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-2xl bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
+            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
               
               {/* Grayscale Dim Background Image */}
               <img 
@@ -158,7 +158,7 @@ export default function ContactPage() {
             </div>
 
             {/* Card 3: Availability */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-2xl bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
+            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
               
               {/* Grayscale Dim Background Image */}
               <img 
@@ -189,7 +189,7 @@ export default function ContactPage() {
           </div>
 
           {/* Center Column: Contact Form */}
-          <div className="lg:col-span-5 p-8 rounded-3xl bg-[#0c0c0e]/95 border border-zinc-800/80 shadow-2xl space-y-8 w-full relative overflow-hidden">
+          <div className="lg:col-span-5 p-8 rounded-xl bg-[#0c0c0e]/95 border border-zinc-800/80 shadow-2xl space-y-8 w-full relative overflow-hidden">
             {/* Corner Viewfinder Decorations */}
             <div className="absolute top-4 left-4 w-2.5 h-2.5 border-t-2 border-l-2 border-zinc-800" />
             <div className="absolute top-4 right-4 w-2.5 h-2.5 border-t-2 border-r-2 border-zinc-800" />
@@ -273,7 +273,7 @@ export default function ContactPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white text-xs font-bold uppercase tracking-widest shadow-[0_4px_20px_rgba(34,211,238,0.2)] active:scale-98 transition-all duration-300 cursor-pointer"
+                className="w-full py-4 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white text-xs font-bold uppercase tracking-widest shadow-[0_4px_20px_rgba(34,211,238,0.2)] active:scale-98 transition-all duration-300 cursor-pointer"
               >
                 Launch via WhatsApp
               </button>
@@ -282,7 +282,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Calendar */}
-          <div className="lg:col-span-4 p-8 rounded-3xl bg-[#0c0c0e]/95 border border-zinc-800/80 shadow-2xl flex flex-col justify-between space-y-8 min-h-full w-full relative overflow-hidden">
+          <div className="lg:col-span-4 p-8 rounded-xl bg-[#0c0c0e]/95 border border-zinc-800/80 shadow-2xl flex flex-col justify-between space-y-8 min-h-full w-full relative overflow-hidden">
             {/* Corner Viewfinder Decorations */}
             <div className="absolute top-4 left-4 w-2.5 h-2.5 border-t-2 border-l-2 border-zinc-800" />
             <div className="absolute top-4 right-4 w-2.5 h-2.5 border-t-2 border-r-2 border-zinc-800" />
@@ -308,7 +308,7 @@ export default function ContactPage() {
                         key={day.id}
                         type="button"
                         onClick={() => setSelectedDay(`${day.label}, ${day.date}`)}
-                        className={`p-2 py-3 rounded-xl border text-center flex flex-col justify-between transition-all duration-300 cursor-pointer ${
+                        className={`p-2 py-3 rounded-lg border text-center flex flex-col justify-between transition-all duration-300 cursor-pointer ${
                           isSelected
                             ? 'border-[#22d3ee] bg-[#22d3ee]/10 text-[#22d3ee] shadow-[0_0_12px_rgba(34,211,238,0.15)]'
                             : 'border-zinc-850 bg-zinc-950/20 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'

@@ -32,7 +32,7 @@ export default function Footer() {
           <div>
             <Link 
               href="/portfolio"
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white text-[#050507] hover:bg-zinc-200 active:scale-95 text-xs font-bold uppercase tracking-wider rounded-lg transition-all duration-300 shadow-xl"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white text-[#050507] hover:bg-zinc-200 active:scale-95 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-300 shadow-xl"
             >
               View Portfolio
             </Link>
