@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Smooth Counter Component
 function Counter({ target, duration = 2000, suffix = "" }) {
@@ -52,10 +56,71 @@ const highlights = ["DaVinci Resolve", "Higgsfield", "Veo", "Kling"];
 export default function Intro() {
   const [activeStat, setActiveStat] = useState(0);
   const [hoveredStat, setHoveredStat] = useState(null);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => setActiveStat((p) => (p + 1) % stats.length), 3000);
     return () => clearInterval(timer);
+  }, []);
+
+  // GSAP ScrollTrigger animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Left column — stagger children up
+      gsap.fromTo('.intro-left > *', {
+        y: 50,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.85,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      // Right column image card — slide in from right
+      gsap.fromTo('.intro-right', {
+        x: 80,
+        opacity: 0,
+        rotation: 0,
+      }, {
+        x: 0,
+        opacity: 1,
+        rotation: 0,
+        duration: 1.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          once: true,
+        },
+      });
+
+      // Stat cards pop in with stagger
+      gsap.fromTo('.intro-stat', {
+        scale: 0.85,
+        opacity: 0,
+      }, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'back.out(1.7)',
+        scrollTrigger: {
+          trigger: '.intro-stat',
+          start: 'top 85%',
+          once: true,
+        },
+      });
+
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (

@@ -784,33 +784,31 @@ export default function AboutPage() {
             <p className="text-xs text-zinc-500 font-light">The key milestones of my post-production and strategy career.</p>
           </div>
 
-          <div className="max-w-3xl mx-auto relative border-l border-zinc-800/60 ml-4 md:ml-auto md:border-l-0">
-            {/* Center line for desktop */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[1px] bg-zinc-800/60 hidden md:block" />
+          {/* ── DESKTOP / TABLET: original alternating timeline layout ── */}
+          <div className="hidden md:block max-w-3xl mx-auto relative">
+            {/* Center line */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[1px] bg-zinc-800/60" />
 
             <div className="space-y-12">
               {timeline.map((item, idx) => (
-                <div key={idx} className={`relative flex flex-col md:flex-row items-start ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                <div key={idx} className={`relative flex flex-row items-start ${idx % 2 === 0 ? 'flex-row-reverse' : ''}`}>
                   {/* Timeline Dot */}
-                  <div className="absolute left-[-21px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-10 h-10 rounded-full bg-[#0c0c0e] border-2 border-[#22d3ee]/40 flex items-center justify-center text-xs font-bold text-[#22d3ee] shadow-[0_0_15px_rgba(34,211,238,0.2)] z-20">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-1.5 w-10 h-10 rounded-full bg-[#0c0c0e] border-2 border-[#22d3ee]/40 flex items-center justify-center text-xs font-bold text-[#22d3ee] shadow-[0_0_15px_rgba(34,211,238,0.2)] z-20">
                     {item.year.slice(2)}
                   </div>
 
-                  {/* Spacer for layout grid */}
-                  <div className="w-full md:w-1/2 px-8 hidden md:block" />
+                  {/* Spacer */}
+                  <div className="w-1/2 px-8" />
 
-                  {/* Timeline Card with background image */}
-                  <div className="w-full md:w-1/2 px-8 relative z-10">
+                  {/* Card */}
+                  <div className="w-1/2 px-8 relative z-10">
                     <div className="relative p-6 rounded-2xl bg-[#0c0c0e]/80 border border-zinc-800/80 hover:border-[#22d3ee]/30 transition-all duration-500 space-y-2 overflow-hidden group hover:shadow-[0_8px_30px_rgba(34,211,238,0.08)]">
-                      {/* Background image */}
                       <img
                         src={timelineImages[idx]}
                         alt={item.title}
                         className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-30 group-hover:scale-105 transition-all duration-700 z-0 pointer-events-none select-none filter grayscale contrast-125"
                       />
-                      {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0e] via-[#0c0c0e]/85 to-[#0c0c0e]/50 z-0 pointer-events-none" />
-                      {/* Content */}
                       <div className="relative z-10 space-y-2">
                         <span className="text-xs font-bold text-[#22d3ee]/80 font-mono tracking-widest">{item.year}</span>
                         <h4 className="text-lg font-bold text-zinc-100 uppercase group-hover:text-[#22d3ee] transition-colors duration-300">{item.title}</h4>
@@ -822,7 +820,66 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
+
+          {/* ── MOBILE ONLY: sticky stacking cards ── */}
+          <div className="md:hidden flex flex-col gap-0 max-w-2xl mx-auto pb-8">
+
+            {/* Card 1 — 2020 */}
+            <div className="sticky top-[80px] z-10 p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden group mb-4">
+              <img src={timelineImages[0]} alt="2020" className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-28 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/80 to-[#0c0c0e]/40 z-0 pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <div className="text-6xl font-extrabold tracking-widest" style={{ WebkitTextStroke: '1.5px rgba(34, 211, 238, 0.5)', color: 'transparent' }}>2020</div>
+                <div className="space-y-2">
+                  <h4 className="text-lg font-bold tracking-wide text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">{timeline[0].title}</h4>
+                  <p className="text-zinc-400 text-sm font-light leading-relaxed">{timeline[0].desc}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 — 2022 */}
+            <div className="sticky top-[120px] z-20 p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden group mb-4">
+              <img src={timelineImages[1]} alt="2022" className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-28 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/80 to-[#0c0c0e]/40 z-0 pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <div className="text-6xl font-extrabold tracking-widest" style={{ WebkitTextStroke: '1.5px rgba(34, 211, 238, 0.5)', color: 'transparent' }}>2022</div>
+                <div className="space-y-2">
+                  <h4 className="text-lg font-bold tracking-wide text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">{timeline[1].title}</h4>
+                  <p className="text-zinc-400 text-sm font-light leading-relaxed">{timeline[1].desc}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 — 2024 */}
+            <div className="sticky top-[160px] z-30 p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden group mb-4">
+              <img src={timelineImages[2]} alt="2024" className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-28 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/80 to-[#0c0c0e]/40 z-0 pointer-events-none" />
+              <div className="relative z-10 space-y-4">
+                <div className="text-6xl font-extrabold tracking-widest" style={{ WebkitTextStroke: '1.5px rgba(34, 211, 238, 0.5)', color: 'transparent' }}>2024</div>
+                <div className="space-y-2">
+                  <h4 className="text-lg font-bold tracking-wide text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">{timeline[2].title}</h4>
+                  <p className="text-zinc-400 text-sm font-light leading-relaxed">{timeline[2].desc}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 4 — 2026 */}
+            <div className="sticky top-[200px] z-40 p-8 rounded-2xl bg-[#0c0c0e] border border-[#22d3ee]/25 hover:border-[#22d3ee]/50 hover:bg-[#121216] transition-all duration-300 shadow-[0_0_30px_rgba(34,211,238,0.08),0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden group">
+              <img src={timelineImages[3]} alt="2026" className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:opacity-28 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/80 to-[#0c0c0e]/40 z-0 pointer-events-none" />
+              <span className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-[#070709] border border-[#22d3ee]/50 text-[9px] font-bold text-[#22d3ee] uppercase tracking-widest z-20">Present</span>
+              <div className="relative z-10 space-y-4">
+                <div className="text-6xl font-extrabold tracking-widest" style={{ WebkitTextStroke: '1.5px rgba(34, 211, 238, 0.5)', color: 'transparent' }}>2026</div>
+                <div className="space-y-2">
+                  <h4 className="text-lg font-bold tracking-wide text-zinc-100 group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">{timeline[3].title}</h4>
+                  <p className="text-zinc-400 text-sm font-light leading-relaxed">{timeline[3].desc}</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+
 
       </div>
     </div>
