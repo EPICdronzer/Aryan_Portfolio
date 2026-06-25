@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { CONFIG } from '@/config';
+import FloatingObjects from '@/app/(users)/components_layout/FloatingObjects';
 
 export default function ServicesPage() {
   const [reels, setReels] = useState(4);
@@ -10,26 +11,10 @@ export default function ServicesPage() {
   const [addStrategy, setAddStrategy] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleScroll = (e) => {
-    const container = e.currentTarget;
-    const items = container.children;
-    if (!items || items.length === 0) return;
-
-    const containerCenter = container.scrollLeft + container.clientWidth / 2;
-    let minDistance = Infinity;
-    let activeIdx = 0;
-
-    for (let i = 0; i < items.length; i++) {
-      const child = items[i];
-      const childCenter = child.offsetLeft + child.clientWidth / 2;
-      const distance = Math.abs(containerCenter - childCenter);
-      if (distance < minDistance) {
-        minDistance = distance;
-        activeIdx = i;
-      }
-    }
-    setActiveIndex(activeIdx);
-  };
+  const carouselRef = useRef(null);
+  const autoPlayRef = useRef(null);
+  const isUserInteracting = useRef(false);
+  const interactionTimeout = useRef(null);
 
   const services = [
     {
@@ -88,6 +73,79 @@ export default function ServicesPage() {
     }
   ];
 
+  // ── Scroll to index — uses scrollLeft math so the PAGE never jumps ────────
+  const scrollToIndex = useCallback((idx) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    const items = container.children;
+    if (!items[idx]) return;
+    const item = items[idx];
+    const targetLeft = item.offsetLeft - (container.clientWidth - item.offsetWidth) / 2;
+    container.scrollTo({
+      left: Math.max(0, Math.min(targetLeft, container.scrollWidth - container.clientWidth)),
+      behavior: 'smooth',
+    });
+    setActiveIndex(idx);
+  }, []);
+
+  // Stable ref so the interval always calls the latest scrollToIndex
+  const scrollToIndexRef = useRef(scrollToIndex);
+  useEffect(() => {
+    scrollToIndexRef.current = scrollToIndex;
+  }, [scrollToIndex]);
+
+  // ── Auto-advance carousel ─────────────────────────────────────────────────
+  useEffect(() => {
+    const TOTAL = services.length;
+    clearInterval(autoPlayRef.current);
+    autoPlayRef.current = setInterval(() => {
+      if (!isUserInteracting.current) {
+        setActiveIndex((prev) => {
+          const next = (prev + 1) % TOTAL;
+          scrollToIndexRef.current(next);
+          return next;
+        });
+      }
+    }, 4500);
+    return () => clearInterval(autoPlayRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Pause on user interaction, resume after 4 s ──────────────────────────
+  const handleUserInteractionStart = () => {
+    isUserInteracting.current = true;
+    clearTimeout(interactionTimeout.current);
+  };
+
+  const handleUserInteractionEnd = () => {
+    clearTimeout(interactionTimeout.current);
+    interactionTimeout.current = setTimeout(() => {
+      isUserInteracting.current = false;
+    }, 4000);
+  };
+
+  // ── Scroll handler — stopPropagation prevents page scroll contamination ───
+  const handleScroll = (e) => {
+    e.stopPropagation();
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIdx = i;
+      }
+    }
+    setActiveIndex(activeIdx);
+  };
+
+  // ── WhatsApp helpers ──────────────────────────────────────────────────────
   const handleWhatsAppRedirect = () => {
     const message = encodeURIComponent(
       `Hi Aryan!\n\nI customized a package on your website services planner:\n` +
@@ -108,20 +166,24 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="relative pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white">
+    <div className="relative pt-24 md:pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white overflow-hidden">
+      <FloatingObjects id="services" variant="both" />
       {/* Background radial glow */}
       <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[80%] h-[500px] bg-gradient-to-t from-cyan-950/10 to-transparent rounded-full blur-[150px] pointer-events-none z-0" />
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-24">
-        
+      <div className="max-w-7xl mx-auto relative z-10 space-y-14 md:space-y-24">
+
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase">
             03 / MY SERVICES
           </span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
-            POST-PRODUCTION & AI<br />
-            <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
+            POST-PRODUCTION &amp; AI<br />
+            <span
+              className="text-transparent font-black block mt-2"
+              style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}
+            >
               VIDEO SERVICES
             </span>
           </h2>
@@ -130,50 +192,57 @@ export default function ServicesPage() {
           </p>
         </div>
 
-        {/* Core Services Grid (Mobile Swipeable, Desktop Grid) */}
+        {/* Core Services Grid (Mobile Auto-Swipeable, Desktop Grid) */}
         <div>
-          <div 
+          <div
+            ref={carouselRef}
             onScroll={handleScroll}
+            onTouchStart={handleUserInteractionStart}
+            onTouchEnd={handleUserInteractionEnd}
+            onMouseDown={handleUserInteractionStart}
+            onMouseUp={handleUserInteractionEnd}
+            style={{ overscrollBehaviorX: 'contain' }}
             className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:pb-0 relative z-10 md:items-stretch"
           >
             {services.map((s, idx) => (
               <div
                 key={idx}
                 onClick={() => handleServiceWhatsAppRedirect(s.title)}
-                className={`group snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-8 md:p-0 rounded-3xl bg-[#0c0c0e]/95 md:bg-[#0c0c0e] border shadow-lg relative overflow-hidden cursor-pointer transition-all duration-500 ease-out md:flex md:flex-col
+                className={`group snap-center shrink-0 w-[85%] sm:w-[48%] md:w-auto md:shrink p-6 md:p-8 md:p-0 rounded-3xl bg-[#0c0c0e]/95 md:bg-[#0c0c0e] border shadow-lg relative overflow-hidden cursor-pointer transition-all duration-500 ease-out md:flex md:flex-col min-h-[260px] md:min-h-0
                   ${idx === activeIndex
-                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/40 max-md:shadow-[0_0_30px_rgba(34,211,238,0.15)] z-20'
-                    : 'max-md:scale-[0.92] max-md:opacity-45 max-md:border-zinc-800/80 z-10'
+                    ? 'max-md:scale-100 max-md:opacity-100 max-md:border-[#22d3ee]/50 max-md:shadow-[0_0_35px_rgba(34,211,238,0.2)] z-20'
+                    : 'max-md:scale-[0.91] max-md:opacity-40 max-md:border-zinc-800/60 z-10'
                   }
                   md:scale-100 md:opacity-100 md:border-zinc-800/70 md:hover:border-[#22d3ee]/40 md:hover:-translate-y-1.5 md:hover:shadow-[0_25px_60px_-15px_rgba(34,211,238,0.25)]
                 `}
               >
+                {/* Active glow ring on mobile */}
+                {idx === activeIndex && (
+                  <span className="md:hidden absolute inset-0 rounded-3xl ring-1 ring-[#22d3ee]/30 pointer-events-none z-30" />
+                )}
+
                 {/* Mobile-only full-bleed background image */}
-                <img 
-                  src={s.bg} 
+                <img
+                  src={s.bg}
                   alt={s.title}
                   className="md:hidden absolute inset-0 w-full h-full object-cover opacity-45 transition-all duration-500 z-0 pointer-events-none select-none filter contrast-125"
                 />
                 <div className="md:hidden absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/60 to-[#0c0c0e]/15 z-0 pointer-events-none" />
 
-                {/* Desktop-only media strip — vivid color up top, fades to grayscale near the bottom */}
+                {/* Desktop-only media strip */}
                 <div className="hidden md:block relative h-40 overflow-hidden shrink-0">
-                  {/* Base layer: full color, always visible */}
-                  <img 
-                    src={s.bg} 
+                  <img
+                    src={s.bg}
                     alt={s.title}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
                   />
-                  {/* Grayscale layer: masked to fade in only toward the bottom */}
                   <img
                     src={s.bg}
                     alt=""
                     aria-hidden="true"
                     className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:scale-110 transition-all duration-700 [mask-image:linear-gradient(to_bottom,transparent_0%,transparent_40%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,transparent_40%,black_100%)]"
                   />
-                  {/* Bottom fade into the card body */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/50 to-transparent" />
-                  {/* Subtle top vignette for badge legibility — kept light so color still pops */}
                   <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent" />
                   <span className="absolute top-4 right-4 text-[10px] font-mono font-bold text-zinc-300 bg-black/50 backdrop-blur-sm border border-white/10 rounded-full w-7 h-7 flex items-center justify-center">
                     {String(idx + 1).padStart(2, '0')}
@@ -188,6 +257,14 @@ export default function ServicesPage() {
                   <p className="hidden md:block text-[13px] text-zinc-400 font-light leading-relaxed">
                     {s.desc}
                   </p>
+                  {/* Mobile desc — only visible when active */}
+                  <p
+                    className={`md:hidden text-xs text-zinc-400 font-light leading-relaxed transition-all duration-500 ${
+                      idx === activeIndex ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'
+                    }`}
+                  >
+                    {s.desc}
+                  </p>
                 </div>
 
                 {/* Deliverable Tags */}
@@ -200,9 +277,13 @@ export default function ServicesPage() {
                   </div>
                   <div className="flex flex-wrap gap-2 mt-3">
                     {s.deliverables.map((item, id) => (
-                      <span 
-                        key={id} 
-                        className="text-[10px] bg-zinc-950/80 border border-zinc-850 md:border-zinc-800/80 px-3 py-1 rounded-full text-zinc-400 font-medium md:group-hover:border-[#22d3ee]/20 md:group-hover:text-zinc-300 transition-colors"
+                      <span
+                        key={id}
+                        className={`text-[10px] border px-3 py-1 rounded-full font-medium transition-colors duration-300 ${
+                          idx === activeIndex
+                            ? 'max-md:bg-[#22d3ee]/5 max-md:border-[#22d3ee]/20 max-md:text-zinc-200'
+                            : 'max-md:bg-zinc-950/80 max-md:border-zinc-800/60 max-md:text-zinc-500'
+                        } md:bg-zinc-950/80 md:border-zinc-800/80 md:text-zinc-400 md:group-hover:border-[#22d3ee]/20 md:group-hover:text-zinc-300`}
                       >
                         {item}
                       </span>
@@ -214,24 +295,38 @@ export default function ServicesPage() {
           </div>
 
           {/* Dot indicators (mobile only) */}
-          <div className="md:hidden flex justify-center gap-1.5 pt-2">
+          <div className="md:hidden flex justify-center gap-1.5 pt-4">
             {services.map((_, idx) => (
-              <span
+              <button
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === activeIndex ? 'w-5 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700'
+                onClick={() => {
+                  handleUserInteractionStart();
+                  scrollToIndex(idx);
+                  handleUserInteractionEnd();
+                }}
+                className={`h-1.5 rounded-full transition-all duration-400 cursor-pointer ${
+                  idx === activeIndex ? 'w-6 bg-[#22d3ee]' : 'w-1.5 bg-zinc-700 hover:bg-zinc-500'
                 }`}
+                aria-label={`Service ${idx + 1}`}
               />
             ))}
           </div>
+
+          {/* Mobile progress bar */}
+          <div className="md:hidden mt-3 max-w-[200px] mx-auto h-px bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#22d3ee]/60 rounded-full transition-all duration-500"
+              style={{ width: `${((activeIndex + 1) / services.length) * 100}%` }}
+            />
+          </div>
         </div>
 
-        {/* Authentic Interactive Package Planner */}
+        {/* Package Planner */}
         <div className="p-6 sm:p-8 md:p-12 rounded-xl bg-[#0c0c0e]/80 border border-zinc-800/80 relative overflow-hidden shadow-2xl">
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#22d3ee]/[0.015] rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            
+
             {/* Interactive Inputs */}
             <div className="lg:col-span-7 space-y-6 md:space-y-8">
               <div className="space-y-2">
@@ -312,8 +407,8 @@ export default function ServicesPage() {
                   <button
                     onClick={() => setAddThumbnails(!addThumbnails)}
                     className={`px-5 py-4 rounded-xl border-2 text-left transition-all duration-300 flex flex-col justify-between ${
-                      addThumbnails 
-                        ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-white' 
+                      addThumbnails
+                        ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-white'
                         : 'border-zinc-800/80 bg-zinc-950/20 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
                     }`}
                   >
@@ -324,8 +419,8 @@ export default function ServicesPage() {
                   <button
                     onClick={() => setAddStrategy(!addStrategy)}
                     className={`px-5 py-4 rounded-md border-2 text-left transition-all duration-300 flex flex-col justify-between ${
-                      addStrategy 
-                        ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-white' 
+                      addStrategy
+                        ? 'border-[#22d3ee]/40 bg-[#22d3ee]/5 text-white'
                         : 'border-zinc-800/80 bg-zinc-950/20 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
                     }`}
                   >
@@ -340,7 +435,7 @@ export default function ServicesPage() {
             <div className="lg:col-span-5 space-y-6 lg:border-l lg:border-zinc-900 lg:pl-10">
               <div className="p-5 sm:p-6 rounded-xl bg-[#060608] border border-zinc-900 space-y-5 sm:space-y-6">
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Package Summary</span>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-baseline gap-3 text-[11px] sm:text-xs text-zinc-400">
                     <span>Short-Form Reels</span>

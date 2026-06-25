@@ -1,6 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import FloatingObjects from '@/app/(users)/components_layout/FloatingObjects';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 function getYTId(url) {
@@ -187,6 +192,73 @@ export default function PortfolioPage() {
   const [editStage, setEditStage]     = useState('raw');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const pageRef = useRef(null);
+
+  // GSAP animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Header block wipe reveal
+      tl.fromTo('.portfolio-header', {
+        y: 40,
+        opacity: 0,
+        clipPath: 'inset(0 0 30% 0)',
+      }, {
+        y: 0,
+        opacity: 1,
+        clipPath: 'inset(0 0 0% 0)',
+        duration: 0.9,
+      });
+
+      // Search bar slides up
+      tl.fromTo('.portfolio-search', {
+        y: 30,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.65,
+      }, '-=0.5');
+
+      // Video cards stagger in on scroll
+      gsap.fromTo('.portfolio-card', {
+        y: 50,
+        opacity: 0,
+        scale: 0.96,
+      }, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.portfolio-card',
+          start: 'top 88%',
+          once: true,
+        },
+      });
+
+      // BTS section slides up on scroll
+      gsap.fromTo('.portfolio-bts', {
+        y: 60,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.portfolio-bts',
+          start: 'top 80%',
+          once: true,
+        },
+      });
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const filtered = projects.filter((p) => {
     const matchesCategory = filter === 'all' || p.category === filter;
@@ -199,18 +271,19 @@ export default function PortfolioPage() {
   });
 
   return (
-    <div className="relative pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white">
+    <div ref={pageRef} className="relative pt-24 md:pt-32 pb-24 px-6 md:px-20 lg:px-32 text-white overflow-hidden">
+      <FloatingObjects id="portfolio" variant="both" />
       {/* Background glow */}
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[80%] h-[500px] bg-gradient-to-t from-cyan-950/10 to-transparent rounded-full blur-[150px] pointer-events-none z-0" />
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-24">
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <div className="portfolio-header text-center max-w-3xl mx-auto space-y-4">
           <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase">
             02 / MY WORK
           </span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
             CASE STUDIES &amp; VIDEO<br />
             <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34,211,238,0.4)', color: 'transparent' }}>
               SHOWCASE
@@ -222,7 +295,7 @@ export default function PortfolioPage() {
         </div>
 
         {/* Search & Filter Container */}
-        <div className="max-w-xl mx-auto space-y-4 relative z-20">
+        <div className="portfolio-search max-w-xl mx-auto space-y-4 relative z-20">
           <div className="relative flex items-center bg-[#0c0c0e]/90 border border-zinc-800/80 rounded-2xl p-1.5 focus-within:border-cyan-500/50 focus-within:shadow-[0_0_20px_rgba(34,211,238,0.12)] transition-all duration-300">
             {/* Search Icon */}
             <div className="pl-3.5 pr-2 text-zinc-500 flex items-center">
@@ -321,11 +394,11 @@ export default function PortfolioPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filtered.map((p) => (
             <div
               key={p.url}
-              className="group flex flex-col rounded-3xl bg-[#0c0c0e]/90 border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216]/95 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 overflow-hidden"
+              className="portfolio-card group flex flex-col rounded-3xl bg-[#0c0c0e]/90 border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216]/95 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 overflow-hidden"
             >
               {/* Real YouTube thumbnail / player */}
               <YouTubeCard url={p.url} title={p.title} />
@@ -359,7 +432,7 @@ export default function PortfolioPage() {
         )}
 
         {/* Behind the Scenes Simulator */}
-        <div className="p-8 md:p-12 rounded-xl bg-[#0c0c0e]/80 border border-zinc-800/80 space-y-10 relative overflow-hidden shadow-2xl">
+        <div className="portfolio-bts p-8 md:p-12 rounded-xl bg-[#0c0c0e]/80 border border-zinc-800/80 space-y-10 relative overflow-hidden shadow-2xl">
           <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-[#22d3ee]/[0.02] rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">

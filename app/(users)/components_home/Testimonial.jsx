@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import FloatingObjects from '@/app/(users)/components_layout/FloatingObjects';
 
 export default function Testimonial() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -52,6 +53,7 @@ export default function Testimonial() {
   const current = testimonials[activeIndex];  return (
     <section className="relative bg-[#070709] text-white py-12 md:py-20 px-6 md:px-20 lg:px-32 border-t border-zinc-900/60 overflow-hidden">
       
+      <FloatingObjects id="testimonial" variant="both" />
       {/* Background radial highlight */}
       <div className="absolute top-1/2 right-1/4 w-[50%] h-[300px] bg-gradient-to-t from-cyan-950/5 to-transparent rounded-full blur-[100px] pointer-events-none" />
 

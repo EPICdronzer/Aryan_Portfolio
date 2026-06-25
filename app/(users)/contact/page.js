@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { CONFIG } from '@/config';
+import FloatingObjects from '@/app/(users)/components_layout/FloatingObjects';
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -10,6 +11,62 @@ export default function ContactPage() {
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [isCopied, setIsCopied] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const infoCarouselRef = useRef(null);
+  const autoPlayRef = useRef(null);
+  const isInteracting = useRef(false);
+  const interactionTimeout = useRef(null);
+
+  const CARD_COUNT = 3;
+
+  // Only scrolls the carousel container — never the page
+  const scrollToCard = useCallback((idx) => {
+    const container = infoCarouselRef.current;
+    if (!container) return;
+    const items = container.children;
+    if (!items[idx]) return;
+    const item = items[idx];
+    const targetLeft = item.offsetLeft - (container.clientWidth - item.offsetWidth) / 2;
+    container.scrollTo({ left: Math.max(0, Math.min(targetLeft, container.scrollWidth - container.clientWidth)), behavior: 'smooth' });
+    setActiveCardIndex(idx);
+  }, []);
+
+  // Auto-advance info cards every 4s
+  useEffect(() => {
+    autoPlayRef.current = setInterval(() => {
+      if (!isInteracting.current) {
+        setActiveCardIndex((prev) => {
+          const next = (prev + 1) % CARD_COUNT;
+          scrollToCard(next);
+          return next;
+        });
+      }
+    }, 4000);
+    return () => clearInterval(autoPlayRef.current);
+  }, [scrollToCard]);
+
+  const pauseAutoPlay = () => {
+    isInteracting.current = true;
+    clearTimeout(interactionTimeout.current);
+    interactionTimeout.current = setTimeout(() => { isInteracting.current = false; }, 5000);
+  };
+
+  const handleInfoScroll = (e) => {
+    const container = e.currentTarget;
+    const items = container.children;
+    if (!items || items.length === 0) return;
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let minDistance = Infinity;
+    let activeIdx = 0;
+    for (let i = 0; i < items.length; i++) {
+      const child = items[i];
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) { minDistance = distance; activeIdx = i; }
+    }
+    setActiveCardIndex(activeIdx);
+  };
 
   const days = [
     { id: 'mon', label: 'Monday', date: 'June 22' },
@@ -57,6 +114,7 @@ export default function ContactPage() {
         }}
       />
 
+      <FloatingObjects id="contact" variant="both" />
       {/* Cyberpunk ambient rotating glow spots */}
       <div className="absolute top-[10%] left-1/4 w-[400px] h-[400px] bg-cyan-500/[0.03] rounded-full blur-[120px] pointer-events-none animate-float-all-1 z-0" />
       <div className="absolute bottom-[20%] right-1/4 w-[450px] h-[450px] bg-cyan-500/[0.04] rounded-full blur-[140px] pointer-events-none animate-float-all-2 z-0" />
@@ -69,7 +127,7 @@ export default function ContactPage() {
         ARYAN_STUDIO © 2026 // ALL_STATUS_ONLINE
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-16">
+      <div className="max-w-7xl mx-auto relative z-10 space-y-10 md:space-y-16">
         
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -77,7 +135,7 @@ export default function ContactPage() {
             <span className="text-[10px] font-black tracking-[0.3em] text-[#22d3ee] uppercase">
             04 / CONTACT DATABASE
           </span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
             START YOUR VIRAL<br />
             <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}>
               VIDEO CAMPAIGN
@@ -92,11 +150,21 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
           
           {/* Left Column: Info Cards (Mobile Swiper, Tablet/Desktop Sidebar Stack) */}
-          <div className="lg:col-span-3 flex overflow-x-auto snap-x snap-mandatory gap-4 scrollbar-none pb-6 -mx-6 px-6 lg:flex lg:flex-col lg:mx-0 lg:px-0 lg:pb-0 lg:gap-5 w-auto">
+          <div
+            ref={infoCarouselRef}
+            onScroll={handleInfoScroll}
+            onTouchStart={pauseAutoPlay}
+            onMouseDown={pauseAutoPlay}
+            className="lg:col-span-3 flex overflow-x-auto snap-x snap-mandatory gap-4 scrollbar-none pb-6 -mx-6 px-6 lg:flex lg:flex-col lg:mx-0 lg:px-0 lg:pb-0 lg:gap-5 w-auto"
+          >
             
             {/* Card 1: Location */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
-              
+            <div className={`snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between transition-all duration-500 ease-out
+              ${activeCardIndex === 0
+                ? 'max-lg:border-[#22d3ee]/40 max-lg:shadow-[0_0_25px_rgba(34,211,238,0.12)] max-lg:scale-100 max-lg:opacity-100'
+                : 'max-lg:border-zinc-800/50 max-lg:scale-[0.92] max-lg:opacity-40'
+              } lg:border-zinc-850 hover:border-cyan-500/20`}
+            >
               {/* Grayscale Dim Background Image */}
               <img 
                 src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" 
@@ -104,17 +172,13 @@ export default function ContactPage() {
                 className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-25 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/85 to-transparent z-0 pointer-events-none" />
-              
               {/* Top decor bar */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500/10 via-cyan-500/30 to-transparent" />
-              
               <div className="relative z-10 space-y-1">
                 <span className="text-[8px] font-mono font-bold tracking-widest text-[#22d3ee]/80 uppercase block">NODE LOG //</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 block">Location</span>
                 <h4 className="text-base font-black text-zinc-200 uppercase tracking-wide mt-1">New Delhi, India</h4>
               </div>
-
-              {/* Glowing radar GPS graphic */}
               <div className="relative z-10 flex items-center justify-between border-t border-zinc-900/60 pt-4 mt-2">
                 <p className="text-[10px] text-zinc-500 font-mono">28.6139° N, 77.2090° E</p>
                 <div className="flex items-center gap-1">
@@ -125,8 +189,12 @@ export default function ContactPage() {
             </div>
 
             {/* Card 2: Contact Channels */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
-              
+            <div className={`snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between transition-all duration-500 ease-out
+              ${activeCardIndex === 1
+                ? 'max-lg:border-[#22d3ee]/40 max-lg:shadow-[0_0_25px_rgba(34,211,238,0.12)] max-lg:scale-100 max-lg:opacity-100'
+                : 'max-lg:border-zinc-800/50 max-lg:scale-[0.92] max-lg:opacity-40'
+              } lg:border-zinc-850 hover:border-cyan-500/20`}
+            >
               {/* Grayscale Dim Background Image */}
               <img 
                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80" 
@@ -134,20 +202,15 @@ export default function ContactPage() {
                 className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-25 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/85 to-transparent z-0 pointer-events-none" />
-              
               {/* Top decor bar */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500/10 via-cyan-500/30 to-transparent" />
-              
               <div className="relative z-10 space-y-1">
                 <span className="text-[8px] font-mono font-bold tracking-widest text-[#22d3ee]/80 uppercase block">DIRECT CONNECT //</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 block">Contact Channels</span>
                 <h4 className="text-xs font-mono font-bold text-zinc-300 tracking-tight break-all mt-1">{CONFIG.email}</h4>
               </div>
-
               <div className="relative z-10 flex items-center justify-between border-t border-zinc-900/60 pt-4 mt-2">
                 <p className="text-[10px] text-zinc-550 font-mono">{CONFIG.formattedPhone}</p>
-                
-                {/* Visual email copy tag button */}
                 <button 
                   onClick={handleCopyEmail}
                   className="px-2 py-0.5 rounded border border-zinc-800 bg-zinc-950/60 text-[9px] font-bold text-zinc-500 uppercase tracking-wider hover:border-cyan-500/30 hover:text-[#22d3ee] transition-all cursor-pointer"
@@ -158,8 +221,12 @@ export default function ContactPage() {
             </div>
 
             {/* Card 3: Availability */}
-            <div className="snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border border-zinc-850 shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between hover:border-cyan-500/20 transition-all duration-300">
-              
+            <div className={`snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-full lg:shrink p-6 rounded-lg bg-[#0c0c0e]/90 border shadow-lg relative overflow-hidden group min-h-[150px] flex flex-col justify-between transition-all duration-500 ease-out
+              ${activeCardIndex === 2
+                ? 'max-lg:border-[#22d3ee]/40 max-lg:shadow-[0_0_25px_rgba(34,211,238,0.12)] max-lg:scale-100 max-lg:opacity-100'
+                : 'max-lg:border-zinc-800/50 max-lg:scale-[0.92] max-lg:opacity-40'
+              } lg:border-zinc-850 hover:border-cyan-500/20`}
+            >
               {/* Grayscale Dim Background Image */}
               <img 
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" 
@@ -167,16 +234,13 @@ export default function ContactPage() {
                 className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-25 group-hover:scale-105 transition-all duration-500 z-0 pointer-events-none select-none filter grayscale contrast-125"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-[#0c0c0e]/85 to-transparent z-0 pointer-events-none" />
-              
               {/* Top decor bar */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500/10 via-cyan-500/30 to-transparent" />
-              
               <div className="relative z-10 space-y-1">
                 <span className="text-[8px] font-mono font-bold tracking-widest text-[#22d3ee]/80 uppercase block">SCHEDULER STATUS //</span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 block">Availability</span>
                 <h4 className="text-xs font-bold text-zinc-300 uppercase tracking-wider mt-1.5 leading-snug">Mon - Fri: 10AM - 7PM IST</h4>
               </div>
-
               <div className="relative z-10 flex items-center justify-between border-t border-zinc-900/60 pt-4 mt-2">
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

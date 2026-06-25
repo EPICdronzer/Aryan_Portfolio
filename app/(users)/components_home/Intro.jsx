@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import FloatingObjects from '@/app/(users)/components_layout/FloatingObjects';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -124,8 +125,9 @@ export default function Intro() {
   }, []);
 
   return (
-    <section className="relative bg-[#070709] text-white py-24 px-6 md:px-20 lg:px-32 border-t border-zinc-900/60 overflow-hidden">
+    <section ref={sectionRef} className="relative bg-[#070709] text-white py-24 px-6 md:px-20 lg:px-32 border-t border-zinc-900/60 overflow-hidden">
 
+      <FloatingObjects id="intro" variant="both" />
       {/* === BACKGROUND ELEMENTS === */}
       {/* Subtle dot grid */}
       <div

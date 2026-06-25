@@ -1,8 +1,73 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Process() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Label + divider fade in
+      gsap.fromTo('.process-label', {
+        opacity: 0,
+        y: 20,
+      }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          once: true,
+        },
+      });
+
+      // Heading clip-path wipe reveal
+      gsap.fromTo('.process-heading', {
+        clipPath: 'inset(0 0 100% 0)',
+        opacity: 0,
+      }, {
+        clipPath: 'inset(0 0 0% 0)',
+        opacity: 1,
+        duration: 0.9,
+        ease: 'power4.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      // Process cards — stagger up from below
+      gsap.fromTo('.process-card', {
+        y: 70,
+        opacity: 0,
+        scale: 0.96,
+      }, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.85,
+        stagger: 0.18,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.process-card',
+          start: 'top 85%',
+          once: true,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="about" className="relative bg-[#070709] text-white py-24 px-6 md:px-20 lg:px-32 border-t border-zinc-900/60">
+    <section ref={sectionRef} id="about" className="relative bg-[#070709] text-white py-24 px-6 md:px-20 lg:px-32 border-t border-zinc-900/60">
       
       {/* Background radial glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -12,7 +77,7 @@ export default function Process() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Tiny uppercase label */}
-        <div className="mb-4 flex flex-col items-center">
+        <div className="process-label mb-4 flex flex-col items-center">
           <span className="text-[10px] font-black tracking-[0.3em] text-zinc-500 uppercase">
             Process
           </span>
@@ -21,7 +86,7 @@ export default function Process() {
         </div>
 
         {/* Section Heading */}
-        <div className="mb-20 text-center max-w-2xl mx-auto">
+        <div className="process-heading mb-20 text-center max-w-2xl mx-auto">
           <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none text-zinc-100 font-sans">
             MY WORKING<br />
             <span className="text-transparent font-black block mt-2" style={{ WebkitTextStroke: '1px rgba(34, 211, 238, 0.4)', color: 'transparent' }}>
@@ -34,7 +99,7 @@ export default function Process() {
         <div className="flex flex-col md:grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 items-stretch relative pb-0">
           
           {/* Step 01 */}
-          <div className="sticky top-[100px] z-10 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
+          <div className="process-card sticky top-[100px] z-10 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
             {/* Dim Background Image */}
             <img 
               src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" 
@@ -65,7 +130,7 @@ export default function Process() {
           </div>
 
           {/* Step 02 */}
-          <div className="sticky top-[150px] z-20 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
+          <div className="process-card sticky top-[150px] z-20 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
             {/* Dim Background Image */}
             <img 
               src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80" 
@@ -96,7 +161,7 @@ export default function Process() {
           </div>
 
           {/* Step 03 */}
-          <div className="sticky top-[200px] z-30 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
+          <div className="process-card sticky top-[200px] z-30 md:relative md:top-auto md:z-auto p-8 rounded-2xl bg-[#0c0c0e] border border-zinc-800/80 hover:border-[#22d3ee]/30 hover:bg-[#121216] transition-all duration-300 flex flex-col justify-between h-auto md:h-full group hover:translate-y-[-5px] md:hover:translate-y-[-5px] shadow-[0_12px_40px_rgba(0,0,0,0.7)] relative overflow-hidden">
             {/* Dim Background Image */}
             <img 
               src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80" 

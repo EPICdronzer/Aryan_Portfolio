@@ -1,14 +1,69 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CONFIG } from '@/config';
+import gsap from 'gsap';
 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef(null);
+
+  // GSAP entrance animation on mount
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Navbar slides down from above
+      tl.fromTo(navRef.current, {
+        y: -60,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.7,
+      });
+
+      // Logo pops in
+      tl.fromTo('.nav-logo', {
+        x: -24,
+        opacity: 0,
+      }, {
+        x: 0,
+        opacity: 1,
+        duration: 0.55,
+      }, '-=0.35');
+
+      // Nav links stagger in from top
+      tl.fromTo('.nav-link', {
+        y: -14,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.45,
+        stagger: 0.08,
+      }, '-=0.3');
+
+      // CTA button pops in from right
+      tl.fromTo('.nav-cta', {
+        x: 20,
+        opacity: 0,
+        scale: 0.92,
+      }, {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.45,
+        ease: 'back.out(1.5)',
+      }, '-=0.3');
+    }, navRef);
+
+    return () => ctx.revert();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +91,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <nav ref={navRef} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isOpen
           ? 'py-6 bg-transparent border-b border-transparent'
           : scrolled 
@@ -46,7 +101,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 md:px-20 lg:px-32 flex items-center justify-between">
           
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2 group relative z-50">
+          <Link href="/" className="nav-logo flex items-center gap-2 group relative z-50">
             {/* Desktop: show text name */}
             <span className="hidden lg:inline text-xl font-black tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300 uppercase">
               Aryan Chopra
@@ -66,25 +121,25 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links — only on lg+ */}
           <div className="hidden lg:flex items-center gap-8">
-            <Link href="/" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+            <Link href="/" className="nav-link text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Home
             </Link>
-            <Link href="/about" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+            <Link href="/about" className="nav-link text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               About
             </Link>
-            <Link href="/portfolio" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+            <Link href="/portfolio" className="nav-link text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Work
             </Link>
-            <Link href="/services" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+            <Link href="/services" className="nav-link text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Services
             </Link>
-            <Link href="/contact" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
+            <Link href="/contact" className="nav-link text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300">
               Contact
             </Link>
           </div>
 
           {/* Desktop CTA — only on lg+ */}
-          <div className="hidden lg:block">
+          <div className="nav-cta hidden lg:block">
             <a
               href={`https://wa.me/${CONFIG.phone}?text=${encodeURIComponent("Hi Aryan! I'd like to discuss a project with you.")}`}
               target="_blank"

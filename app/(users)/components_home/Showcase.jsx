@@ -124,23 +124,17 @@ export function Carousel({ children }) {
 
   const handleScrollEvent = (e) => {
     checkScrollLimits();
-    
     const container = e.currentTarget;
     const items = container.children;
     if (!items || items.length === 0) return;
-
     const containerCenter = container.scrollLeft + container.clientWidth / 2;
     let minDistance = Infinity;
     let activeIdx = 0;
-
     for (let i = 0; i < items.length; i++) {
       const child = items[i];
       const childCenter = child.offsetLeft + child.clientWidth / 2;
       const distance = Math.abs(containerCenter - childCenter);
-      if (distance < minDistance) {
-        minDistance = distance;
-        activeIdx = i;
-      }
+      if (distance < minDistance) { minDistance = distance; activeIdx = i; }
     }
     setActiveIndex(activeIdx);
   };
@@ -148,14 +142,10 @@ export function Carousel({ children }) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
     checkScrollLimits();
-
     container.addEventListener('scroll', handleScrollEvent);
     window.addEventListener('resize', checkScrollLimits);
-
     const timer = setTimeout(checkScrollLimits, 300);
-
     return () => {
       container.removeEventListener('scroll', handleScrollEvent);
       window.removeEventListener('resize', checkScrollLimits);
@@ -168,10 +158,8 @@ export function Carousel({ children }) {
     const container = containerRef.current;
     const card = container.firstElementChild;
     if (!card) return;
-
     const cardWidth = card.getBoundingClientRect().width + 16;
     const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
-
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
@@ -296,7 +284,7 @@ function RetentionCurve() {
     if (!isAutoPlaying) return;
     const id = setInterval(() => {
       setActiveIdx((i) => (i + 1) % RETENTION_BEATS.length);
-    }, 3200);
+    }, 4500);
     return () => clearInterval(id);
   }, [isAutoPlaying]);
 
