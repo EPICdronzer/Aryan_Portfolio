@@ -111,19 +111,14 @@ function VideoSkeletonCard({ title = "Campaign Preview" }) {
 
 export function Carousel({ children }) {
   const containerRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
+  const isUserInteracting = useRef(false);
+  const interactionTimeout = useRef(null);
+  const autoPlayRef = useRef(null);
 
-  const checkScrollLimits = () => {
-    if (!containerRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-    setCanScrollLeft(scrollLeft > 5);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-  };
+  const totalItems = React.Children.count(children);
 
   const handleScrollEvent = (e) => {
-    checkScrollLimits();
     const container = e.currentTarget;
     const items = container.children;
     if (!items || items.length === 0) return;
@@ -139,35 +134,71 @@ export function Carousel({ children }) {
     setActiveIndex(activeIdx);
   };
 
+  // Scroll an item into view *horizontally only*, by moving the carousel
+  // track's own scrollLeft directly (container.scrollTo). We deliberately
+  // avoid element.scrollIntoView() here — it walks up every scrollable
+  // ancestor, including the page itself, and can drag the whole window
+  // vertically just to satisfy alignment. Computing the delta from
+  // bounding rects and scrolling only the track keeps autoplay from ever
+  // touching the page's scroll position.
+  const centerItem = (idx, behavior = 'smooth') => {
+    const container = containerRef.current;
+    if (!container) return;
+    const item = container.children[idx];
+    if (!item) return;
+    const containerRect = container.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    const delta = (itemRect.left + itemRect.width / 2) - (containerRect.left + containerRect.width / 2);
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const targetLeft = Math.max(0, Math.min(container.scrollLeft + delta, maxScrollLeft));
+    container.scrollTo({ left: targetLeft, behavior });
+  };
+
+  const pauseAutoPlay = () => {
+    isUserInteracting.current = true;
+    clearTimeout(interactionTimeout.current);
+    interactionTimeout.current = setTimeout(() => { isUserInteracting.current = false; }, 5000);
+  };
+
+  // Auto-advance every 4s
+  useEffect(() => {
+    if (totalItems <= 1) return;
+    autoPlayRef.current = setInterval(() => {
+      if (!isUserInteracting.current) {
+        setActiveIndex((prev) => {
+          const next = (prev + 1) % totalItems;
+          centerItem(next);
+          return next;
+        });
+      }
+    }, 4000);
+    return () => clearInterval(autoPlayRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalItems]);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    checkScrollLimits();
     container.addEventListener('scroll', handleScrollEvent);
-    window.addEventListener('resize', checkScrollLimits);
-    const timer = setTimeout(checkScrollLimits, 300);
     return () => {
       container.removeEventListener('scroll', handleScrollEvent);
-      window.removeEventListener('resize', checkScrollLimits);
-      clearTimeout(timer);
     };
   }, [children]);
 
-  const handleScroll = (direction) => {
-    if (!containerRef.current) return;
-    const container = containerRef.current;
-    const card = container.firstElementChild;
-    if (!card) return;
-    const cardWidth = card.getBoundingClientRect().width + 16;
-    const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  // Click a dot to jump straight to that slide.
+  const goToSlide = (idx) => {
+    pauseAutoPlay();
+    setActiveIndex(idx);
+    centerItem(idx);
   };
 
   return (
-    <div className="relative w-full group/carousel pb-14 md:pb-0 md:px-12">
+    <div className="relative w-full group/carousel pb-2">
       {/* Carousel Track Container */}
       <div
         ref={containerRef}
+        onTouchStart={pauseAutoPlay}
+        onMouseDown={pauseAutoPlay}
         className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-4 select-none scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
@@ -184,33 +215,29 @@ export function Carousel({ children }) {
         })}
       </div>
 
-      {/* Left Button */}
-      <button
-        onClick={() => handleScroll('left')}
-        disabled={!canScrollLeft}
-        aria-label="Previous Slide"
-        className="absolute z-20 w-10 h-10 rounded-full bg-zinc-950/90 border border-zinc-800 text-white hover:border-[#22d3ee] hover:text-[#22d3ee] flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.8)] cursor-pointer disabled:opacity-0 disabled:pointer-events-none
-          bottom-0 left-1/2 -translate-x-[calc(50%+24px)]
-          md:bottom-auto md:left-0 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-
-      {/* Right Button */}
-      <button
-        onClick={() => handleScroll('right')}
-        disabled={!canScrollRight}
-        aria-label="Next Slide"
-        className="absolute z-20 w-10 h-10 rounded-full bg-zinc-950/90 border border-zinc-800 text-white hover:border-[#22d3ee] hover:text-[#22d3ee] flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.8)] cursor-pointer disabled:opacity-0 disabled:pointer-events-none
-          bottom-0 left-1/2 translate-x-[calc(-50%+48px)]
-          md:bottom-auto md:right-0 md:left-auto md:top-1/2 md:translate-x-1/2 md:-translate-y-1/2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
-      </button>
+      {/* Dot pagination — active slide gets an elongated cyan pill, the
+          rest stay small neutral dots. Tapping a dot jumps straight to
+          that slide and pauses autoplay briefly, same as a manual swipe. */}
+      {totalItems > 1 && (
+        <div className="flex items-center justify-center gap-1.5 mt-1">
+          {Array.from({ length: totalItems }).map((_, idx) => {
+            const isActive = idx === activeIndex;
+            return (
+              <button
+                key={idx}
+                onClick={() => goToSlide(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                aria-current={isActive}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? 'w-6 bg-[#22d3ee] shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+                    : 'w-2 bg-zinc-600 hover:bg-zinc-400'
+                }`}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

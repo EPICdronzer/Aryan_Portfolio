@@ -161,7 +161,7 @@ export default function Testimonial() {
               onClick={() => handleSlideChange(index)}
               className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                 activeIndex === index 
-                  ? 'w-6 bg-white' 
+                  ? 'w-6 bg-[#22d3ee]' 
                   : 'w-1.5 bg-zinc-800 hover:bg-zinc-700'
               }`}
               aria-label={`Go to slide ${index + 1}`}
